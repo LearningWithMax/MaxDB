@@ -2,7 +2,7 @@
 // This file is public on GitHub Pages, so a project that must stay private is simply not in it (there is no "public" flag), and no login
 // is ever written here. Each entry has either an image (an HD still, with a thumb at half size) or a figure (a drawn diagram), never both,
 // and no video. Only a live project may link: `href` opens the real thing in a new tab, `case` opens its case view (#projects/<case>).
-// `access: 'request'` shows an "Ask for access" email button for a project whose demo sits behind a login.
+// `access: 'request'` shows an "Ask for access" email button for a project whose demo sits behind a login; accessTo names the private part ("the dashboard") when the rest is public.
 // An optional note (one short sentence) shows under the title, for something a visitor should know before they look, such as a redesign on its way.
 // An optional dashboard (up to 300 characters) adds an "Inside the dashboard" row for a project with a private side that cannot be shown.
 
@@ -11,7 +11,7 @@ const STATUS_LABELS = { live: 'Live', building: 'Building and testing', planned:
 
 const PROJECTS = [
   {
-    id: 'car-broker', title: 'Car broker template', status: 'live', order: 1, access: 'request', href: 'https://mdesigns-broker-demo.vercel.app',
+    id: 'car-broker', title: 'Car broker template', status: 'live', order: 1, access: 'request', accessTo: 'the dashboard', href: 'https://mdesigns-broker-demo.vercel.app',
     oneLine: 'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.',
     dashboard: 'Requests with a status for each car, private notes, reply templates and a calendar. Cars with photos, prices and tags for each path. Switch paths on or off, manage locations and site images, and see top customers.',
     builtWith: 'Next.js, React, TypeScript, Tailwind, Supabase, Resend and Vercel.',
@@ -119,6 +119,15 @@ function validateProjects(list, opts){
       if(p.access !== 'request') bad('access must be "request"');
       if(p.status === 'planned') bad('a planned project cannot ask for access');
     }
+    if(p.accessTo !== undefined){
+      if(p.access !== 'request') bad('accessTo needs access "request"');
+      if(typeof p.accessTo !== 'string') bad('accessTo must be text');
+      else {
+        if(!p.accessTo) bad('accessTo is empty');
+        if(p.accessTo.length > 40) bad('accessTo is longer than 40 characters');
+        if(hasBannedDash(p.accessTo)) bad('accessTo has a dash the copy rules ban');
+      }
+    }
     if(p.figure){
       if(p.figure.kind !== 'words' && p.figure.kind !== 'flow') bad('figure kind must be words or flow');
       if(!p.figure.items || !p.figure.items.length) bad('figure has no items');
@@ -181,7 +190,7 @@ function visualHtml(p, opts){
 // The email a visitor sends to ask for a project's demo login. The login itself is given on a call and is never written here.
 function accessHref(p){
   const subject = 'Demo access: ' + p.title;
-  const body = 'Hi Max,\n\nI saw ' + p.title + ' on your site and would like to see the demo.';
+  const body = 'Hi Max,\n\nI saw ' + p.title + ' on your site and would like ' + (p.accessTo ? 'access to ' + p.accessTo : 'to see the demo') + '.';
   return 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
@@ -192,7 +201,7 @@ function projectActions(p){
   const out = [];
   if(p.href) out.push({ kind: 'visit', href: p.href, label: 'Visit', name: 'Visit ' + p.title + ' (opens in a new tab)', newTab: true });
   if(p.case) out.push({ kind: 'case', href: '#projects/' + p.case, label: 'See how it is built', name: 'See how ' + p.title + ' is built', newTab: false });
-  if(p.access === 'request') out.push({ kind: 'access', href: accessHref(p), label: 'Ask for access', name: 'Ask for access to ' + p.title, newTab: false });
+  if(p.access === 'request') out.push({ kind: 'access', href: accessHref(p), label: p.accessTo ? 'Ask for access to ' + p.accessTo : 'Ask for access', name: p.accessTo ? 'Ask for access to ' + p.accessTo + ' of ' + p.title : 'Ask for access to ' + p.title, newTab: false });
   return out;
 }
 

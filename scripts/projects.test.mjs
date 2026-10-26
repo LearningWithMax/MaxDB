@@ -243,7 +243,8 @@ test('visualHtml: an image is one lazy img with its size and description (the th
 
 test('accessHref: a mailto to the CV address, with the project in the subject and a short greeting, all encoded', () => {
   assert.equal(accessHref(PROJECTS[0]),
-    'mailto:duffaud.max@gmail.com?subject=Demo%20access%3A%20Car%20broker%20template&body=Hi%20Max%2C%0A%0AI%20saw%20Car%20broker%20template%20on%20your%20site%20and%20would%20like%20to%20see%20the%20demo.');
+    'mailto:duffaud.max@gmail.com?subject=Demo%20access%3A%20Car%20broker%20template&body=Hi%20Max%2C%0A%0AI%20saw%20Car%20broker%20template%20on%20your%20site%20and%20would%20like%20access%20to%20the%20dashboard.');
+  assert.match(accessHref(PROJECTS[4]), /would%20like%20to%20see%20the%20demo\.$/, 'a project with no accessTo keeps the general words');
   const tricky = accessHref(entry(0, { title: 'Q&A "demo" <b>' }));
   assert.match(tricky, /subject=Demo%20access%3A%20Q%26A%20%22demo%22%20%3Cb%3E&body=/);
   assert.equal(tricky.split('?').length, 2, 'one query string');
@@ -257,7 +258,7 @@ test('projectActions: a public address visits in a new tab, a case view opens in
   const car = plain(projectActions(PROJECTS[0]));
   assert.deepEqual(car.map((a) => a.kind), ['visit', 'access'], 'the car broker has its public demo and its private dashboard');
   assert.equal(car[0].href, 'https://mdesigns-broker-demo.vercel.app');
-  assert.equal(car[1].label, 'Ask for access'); assert.equal(car[1].name, 'Ask for access to Car broker template'); assert.equal(car[1].newTab, false);
+  assert.equal(car[1].label, 'Ask for access to the dashboard'); assert.equal(car[1].name, 'Ask for access to the dashboard of Car broker template'); assert.equal(car[1].newTab, false);
   assert.equal(car[1].href, accessHref(PROJECTS[0]));
   assert.deepEqual(plain(projectActions(PROJECTS[4])).map((a) => a.kind), ['access']);
   assert.deepEqual(plain(projectActions(entry(1, { access: 'request' }))).map((a) => a.kind), ['case', 'access']);
@@ -285,7 +286,7 @@ test('panelHtml: the title with its status chip, then what it does, the dashboar
 
 test('panelHtml: the buttons are links named for their project, a public demo first; a project with no action has no buttons and no empty box', () => {
   const car = panelHtml(PROJECTS[0]);
-  assert.match(car, /<p class="panel-action"><a class="pill panel-button" href="https:\/\/mdesigns-broker-demo\.vercel\.app" target="_blank" rel="noopener" aria-label="Visit Car broker template \(opens in a new tab\)">Visit<\/a><a class="pill panel-button" href="mailto:duffaud\.max@gmail\.com\?subject=[^"]+" aria-label="Ask for access to Car broker template">Ask for access<\/a><\/p>/);
+  assert.match(car, /<p class="panel-action"><a class="pill panel-button" href="https:\/\/mdesigns-broker-demo\.vercel\.app" target="_blank" rel="noopener" aria-label="Visit Car broker template \(opens in a new tab\)">Visit<\/a><a class="pill panel-button" href="mailto:duffaud\.max@gmail\.com\?subject=[^"]+" aria-label="Ask for access to the dashboard of Car broker template">Ask for access to the dashboard<\/a><\/p>/);
   const ask = panelHtml(PROJECTS[4]);
   assert.match(ask, /<p class="panel-action"><a class="pill panel-button" href="mailto:[^"]+" aria-label="Ask for access to Quote marketplace">Ask for access<\/a><\/p>/);
   assert.doesNotMatch(ask, /target=/, 'an email link does not open a tab');
@@ -343,7 +344,7 @@ test('noscriptListHtml: one item per project with its status and all three facts
     for (const f of ['oneLine', 'builtWith', 'stands']) assert.ok(html.includes(escapeHtml(p[f])), `${p.id} ${f}`);
   }
   assert.match(html, /<a href="#projects\/site">See how This website is built<\/a>/);
-  assert.match(html, /<a href="mailto:duffaud\.max@gmail\.com\?subject=Demo%20access%3A%20Car%20broker%20template[^"]*">Ask for access to Car broker template<\/a>/);
+  assert.match(html, /<a href="mailto:duffaud\.max@gmail\.com\?subject=Demo%20access%3A%20Car%20broker%20template[^"]*">Ask for access to the dashboard of Car broker template<\/a>/);
   assert.match(html, /<a href="https:\/\/mdesigns-broker-demo\.vercel\.app" target="_blank" rel="noopener">Visit Car broker template \(opens in a new tab\)<\/a>/);
   assert.equal(count(html, /<a\b/g), 4, 'the website, the car broker (its demo and its access request) and the marketplace; nobody else has a link');
   assert.match(noscriptListHtml([entry(0, { access: undefined, href: 'https://example.com/demo' })]), /<a href="https:\/\/example\.com\/demo" target="_blank" rel="noopener">Visit Car broker template \(opens in a new tab\)<\/a>/);
@@ -414,4 +415,23 @@ test('noscriptListHtml: the dashboard line is in the plain list too, between wha
   assert.ok(at(escapeHtml(PROJECTS[0].oneLine)) > 0 && at(escapeHtml(PROJECTS[0].oneLine)) < at(' Inside the dashboard: ' + escapeHtml(PROJECTS[0].dashboard)));
   assert.ok(at(' Inside the dashboard: ') < at(' Built with: '));
   assert.equal(count(html, /Inside the dashboard: /g), 1);
+});
+
+// ---- the car broker's button asks for the dashboard (owner, 2026-10-27): its site is public, only the dashboard is private ----
+test('the car broker button says what is private: the dashboard, and only the car broker has an accessTo', () => {
+  assert.equal(plain(PROJECTS[0]).accessTo, 'the dashboard');
+  assert.deepEqual(plain(PROJECTS).filter((p) => p.accessTo !== undefined).map((p) => p.id), ['car-broker']);
+  const html = panelHtml(PROJECTS[0]);
+  assert.match(html, /aria-label="Ask for access to the dashboard of Car broker template">Ask for access to the dashboard<\/a>/);
+  assert.match(panelHtml(PROJECTS[4]), /aria-label="Ask for access to Quote marketplace">Ask for access<\/a>/, 'the marketplace keeps the general button');
+});
+
+test('validateProjects: accessTo is optional, needs an access request, and is short text without dashes', () => {
+  assert.deepEqual(mutate((l) => { delete l[0].accessTo; }), [], 'none is fine');
+  assert.ok(has(mutate((l) => { l[1].accessTo = 'the dashboard'; }), 'site', /accessTo needs access "request"/));
+  assert.ok(has(mutate((l) => { l[0].accessTo = ''; }), 'car-broker', /accessTo is empty/));
+  assert.ok(has(mutate((l) => { l[0].accessTo = 7; }), 'car-broker', /accessTo must be text/));
+  assert.ok(has(mutate((l) => { l[0].accessTo = 'x'.repeat(41); }), 'car-broker', /accessTo is longer than 40/));
+  assert.deepEqual(mutate((l) => { l[0].accessTo = 'x'.repeat(40); }), [], 'at the limit is fine');
+  assert.ok(has(mutate((l) => { l[0].accessTo = 'a — b'; }), 'car-broker', /accessTo has a dash/));
 });
