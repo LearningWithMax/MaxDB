@@ -87,37 +87,33 @@ Resize to 900px wide, JPEG quality about 72, apply EXIF rotation, 50 to 150 KB e
 - Before any large change, say the plan in a few lines and wait for his OK.
 
 ## Current priorities
-0. LAUNCH FIRST (owner decision, 2026-10-27): he wants the site live as soon as it works, to start sharing it, and will not wait for the projects. The Projects page
-   carries a big "Work in progress" notice (aside.projects-notice in index.html, styled in css/projects.css; delete both when the projects settle). Launch steps, one at a time:
-   DONE 2026-10-27: the site-wide construction banner and the CV "Under Construction" tag on Certificates are gone (the owner adds a certificate when he gets one). `lab/` (the three early prototypes, including Fable's flight-globe) is removed and archived outside the repo
-   in `C:/Users/maxu9/Claude Projects/site-archive/` (a zip of lab/ and a zip of the whole source), and the local tag `pre-launch-restructure` marks the last commit before the launch
-   (never push that tag or `restructure`). The Home still is retaken, the full pass is clean. Left: push `old-site`,
-   squash-merge on his explicit OK, check the live page and the LinkedIn preview. THEN, after the launch: rewriting each project's text with the owner, one project at a time (what exists now, what it becomes, why; he
-   answers yes or no; the repo is public, so nothing may be invented). Done: the car broker (2026-10-27): the one line may now be up to 300 characters, a project may have an
-   optional `dashboard` row ("Inside the dashboard", up to 300), the old claim that the broker answers from the dashboard is gone. The code-checked facts are in
-   `car-broker-facts.local.md` (git-ignored: limits and costs are not site copy). The demo online is an earlier version than the code on his PC (its Sales path returns
-   "page not found"), which "Where it stands" says; he will send a list of what is not pushed yet so the dashboard row can be checked against it. The car broker text waits for its release: the owner is pushing the newer code to the demo with the other chat, will test everything, and then gives the final
-   facts; then update the text, the "Inside the dashboard" row (a richer draft with search, filters, CSV export and duplicate is ready, 278 characters), the new-look
-   note and the screenshot, and say that small adjustments are still coming. Next: "This website"
-   (questions asked: is "built with AI" the right claim, the point of the site in one line, credit Fable for the globe?), then the organizer, the broker template for any
-   market and the quote marketplace. Then settle the "How I work" text (he sent two example sites: a four-step process with a discovery call, and a short FAQ with real
-   promises such as a reply time; the point is that templates are a base that is personalized, and specific or unique tools can be built; where it goes: a block on the
-   Projects page, a line in each template panel, or Home). Only claims he can stand behind. After that the launch cleanup (final
-   checks, `old-site` backup, squash-merge on his OK). Idea for after the launch: sell the basic templates on a marketplace for digital products and offer the custom service there too.
-1. Review the new shell, Projects and Trip on branch `restructure` (nothing is pushed, nothing is live). Merging to `main` needs his
-   explicit OK; push the old site as a backup branch (`old-site`) first.
-2. Projects, what is left: the car broker demo (`https://mdesigns-broker-demo.vercel.app`) is about to change visually, so its slide image must
-   be retaken when it does: `node scripts/clips/capture.mjs car-broker`, then `node scripts/clips/still.mjs captures/car-broker/01-home.png
-   img/projects/car-broker/home.webp --w 1600 --h 1000 --limit 250000` and the same with `home-thumb.webp --w 800 --h 500 --limit 80000`, and
-   update the image `alt` in `js/projects.js` if the page looks different, and delete the car broker's `note` there (the "new look is coming" line under its title), then run `node scripts/projects-list.mjs`. Later: real screenshots for the organizer (his phone) and the
-   marketplace, replacing their drawn diagrams; a public `href` when another demo has one. The owner tests the slider swipe on his iPhone
-   (`node scripts/serve.mjs --host`). The earlier whole-branch review is done and its fixes are in; what it left (notes for Fable, deferred
-   minors, merge advice: squash-merge, never push `restructure`) is in `docs/superpowers/notes/2026-10-25-review-results.md` and
-   `2026-10-25-projects-slider-results.md`.
-3. Trip stage 2: Explore mode (Fable adds `setMode` and a country event to the globe), click a country for its album or note.
-4. Launch polish: done (real phone test, sharing tags and image, proofreading pass, construction banner and `lab/` removed). After the launch: the Search Console
-   verification and the LinkedIn Post Inspector check (see `docs/superpowers/notes/2026-10-25-seo-guide.md`).
-5. Owner wants to change the timings of the opening (`modules/opening-config.js`, `js/home-intro.js`) and of the site fading in after it.
-   He will say when; nothing to do until then.
-6. Names that must stay off the Projects page but cannot be written in this public repo go one per line in `scripts/private-names.local.txt`
-   (git-ignored). `node scripts/check.mjs` reads it and prints a note when it is missing.
+LIVE since 2026-10-27 at https://learningwithmax.github.io/MaxDB/ (commit 0bebb21 on `main`, a squash of the old `restructure` branch). The previous one-file site is kept on the
+branch `old-site` and the tag `v1-single-file`. `restructure` and the tag `pre-launch-restructure` are LOCAL archives: never push them (their older commits hold a client name).
+Copies of `lab/` (the early prototypes) and of the whole source are in `C:/Users/maxu9/Claude Projects/site-archive/`. New work goes on a branch made from `main` (the current one
+is `next`); merging into `main` goes live in about a minute and needs the owner's explicit OK. Pushing works from Claude's shell because his GitHub sign-in is remembered.
+
+1. Just after the launch (the owner does these): run the link through LinkedIn's Post Inspector, then post; send the Search Console verification tag so it can be added
+   (see `docs/superpowers/notes/2026-10-25-seo-guide.md`). Later, optionally, a domain of his own.
+2. Project texts, one project at a time with the owner (what exists now, what it becomes, why; he answers yes or no; the repo is public, so nothing may be invented). The Projects
+   page carries a big "Work in progress" notice (`aside.projects-notice` in `index.html`, styled in `css/projects.css`; delete both when the projects settle). The one line may be up
+   to 300 characters, and a project may have an optional `dashboard` row ("Inside the dashboard", up to 300).
+   - Car broker: text done on 2026-10-27, then it waits for the release of the newer code to the demo (the owner is pushing it with the other chat and will test everything). Then
+     update the text and the "Inside the dashboard" row (a richer draft with search, filters, CSV export and duplicate is ready, 278 characters), the new-look note and the
+     screenshot, and say that small adjustments are still coming. The code-checked facts are in `car-broker-facts.local.md` (git-ignored: limits and costs are not site copy).
+     The demo online is an earlier version than the code on his PC (its Sales path returns "page not found"), which "Where it stands" says.
+   - Next: "This website" (questions asked: is "built with AI" the right claim, the point of the site in one line, credit Fable for the globe?), then the organizer, the broker
+     template for any market and the quote marketplace.
+3. The "How I work" text (he sent two example sites: a four-step process with a discovery call, and a short FAQ with real promises such as a reply time). The point is that the
+   templates are a base that is personalized, and that specific or unique tools can be built for a person; both "look what I can do" and "contact me for one like it". Decide with him
+   where it goes (a block on the Projects page, a line in each template panel, or Home). Only claims he can stand behind. Idea for after that: sell the basic templates on a
+   marketplace for digital products and offer the custom service there too (nothing researched yet; check licenses, support and what is claimed before listing anything).
+4. Projects, the picture work: the car broker demo (`https://mdesigns-broker-demo.vercel.app`) is about to change visually, so its slide image must be retaken when it does:
+   `node scripts/clips/capture.mjs car-broker`, then `node scripts/clips/still.mjs captures/car-broker/01-home.png img/projects/car-broker/home.webp --w 1600 --h 1000 --limit 250000`
+   and the same with `home-thumb.webp --w 800 --h 500 --limit 80000`, update the image `alt` in `js/projects.js` if the page looks different, delete the car broker's `note` there
+   (the "new look is coming" line under its title), then run `node scripts/projects-list.mjs`. Later: real screenshots for the organizer (his phone) and the marketplace, replacing
+   their drawn diagrams; a public `href` when another demo has one. What the earlier reviews left (notes for Fable, deferred minors) is in
+   `docs/superpowers/notes/2026-10-25-review-results.md` and `2026-10-25-projects-slider-results.md`.
+5. Trip stage 2: Explore mode (Fable adds `setMode` and a country event to the globe), click a country for its album or note.
+6. Owner wants to change the timings of the opening (`modules/opening-config.js`, `js/home-intro.js`) and of the site fading in after it. He will say when; nothing to do until then.
+7. Names that must stay off the Projects page but cannot be written in this public repo go one per line in `scripts/private-names.local.txt` (git-ignored). `node scripts/check.mjs`
+   reads it and prints a note when it is missing. Add a certificate on the CV when the owner earns one (he will say).
