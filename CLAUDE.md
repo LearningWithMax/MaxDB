@@ -103,8 +103,10 @@ is `next`); merging into `main` goes live in about a minute and needs the owner'
      update the text and the "Inside the dashboard" row (a richer draft with search, filters, CSV export and duplicate is ready, 278 characters), the new-look note and the
      screenshot, and say that small adjustments are still coming. The code-checked facts are in `car-broker-facts.local.md` (git-ignored: limits and costs are not site copy).
      The demo online is an earlier version than the code on his PC (its Sales path returns "page not found"), which "Where it stands" says.
-   - Next: "This website" (questions asked: is "built with AI" the right claim, the point of the site in one line, credit Fable for the globe?), then the organizer, the broker
-     template for any market and the quote marketplace.
+   - This website: text done on 2026-10-27 (the point of the site is a showcase of him: professional, creative and tech sides; the credit goes to Claude as a whole, never to
+     individual models; a plain "Built with Claude" line sits in the footer). The "Built with" row starts with the tool because its label already says "Built with".
+   - Next: the organizer, the broker template for any market and the quote marketplace (the marketplace code is in a folder next to this repo, named for the client it started
+     with; read it to write its text and its access button, and never copy anything private from it into this public repo).
 3. The "How I work" text (he sent two example sites: a four-step process with a discovery call, and a short FAQ with real promises such as a reply time). The point is that the
    templates are a base that is personalized, and that specific or unique tools can be built for a person; both "look what I can do" and "contact me for one like it". Decide with him
    where it goes (a block on the Projects page, a line in each template panel, or Home). Only claims he can stand behind. Idea for after that: sell the basic templates on a

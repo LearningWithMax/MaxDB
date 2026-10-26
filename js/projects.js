@@ -24,9 +24,9 @@ const PROJECTS = [
   },
   {
     id: 'site', title: 'This website', status: 'live', order: 2, case: 'site',
-    oneLine: 'The site you are on: a CV, a trip and these projects, built with AI in plain HTML, CSS and JavaScript.',
-    builtWith: 'Plain HTML, CSS and JavaScript, with three.js and GSAP for the 3D. No framework, no build step.',
-    stands: 'Live. You are on it, and each feature starts as a written spec that Claude builds.',
+    oneLine: 'A showcase of me: my professional experience in the CV, my creative side in the look, and my tech side in the site itself and its animations, including a 3D flight over the places where I was born, studied and worked. I bring the vision and lead, and Claude brainstorms and builds it with me.',
+    builtWith: 'Claude, in plain HTML, CSS and JavaScript, with three.js and GSAP for the 3D. No framework.',
+    stands: 'Live and still growing. It will keep growing as new projects happen and I keep expanding it.',
     image: {
       src: 'img/projects/site/home.webp', thumb: 'img/projects/site/home-thumb.webp', w: 1600, h: 1000,
       alt: 'The home page of this website: the name in large serif type, one line about seven jobs across five countries, and three rows for the CV readings.',

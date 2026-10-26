@@ -179,7 +179,7 @@ test('the website case view is a section inside the Projects page, with the appr
     '<p class="kicker">Project</p>',
     '<h1 id="case-site-title">This website</h1>',
     '<span class="chip chip-live">Live</span>',
-    '<p class="case-lead">The site you are on, built with AI from written specs: a CV that reads three ways, a trip page and this projects page. Plain HTML, CSS and JavaScript, with no framework and no build step.</p>',
+    '<p class="case-lead">The site you are on, built with Claude from written specs: a CV that reads four ways, a trip page and this projects page. Plain HTML, CSS and JavaScript, with no framework and no build step.</p>',
     '<figcaption class="cap">Fig. 1. The opening, spheres gathering into the logo.</figcaption>',
     '<h2>How it is built</h2>',
   ].map((s) => { const i = caseSection.indexOf(s); assert.ok(i >= 0, s); return i; });

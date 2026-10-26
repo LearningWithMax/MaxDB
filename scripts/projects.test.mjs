@@ -32,7 +32,7 @@ test('the five approved projects, in order, with the owner statuses', () => {
 test('the one lines are the approved text', () => {
   assert.deepEqual(plain(PROJECTS).map((p) => p.oneLine), [
     'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.',
-    'The site you are on: a CV, a trip and these projects, built with AI in plain HTML, CSS and JavaScript.',
+    'A showcase of me: my professional experience in the CV, my creative side in the look, and my tech side in the site itself and its animations, including a 3D flight over the places where I was born, studied and worked. I bring the vision and lead, and Claude brainstorms and builds it with me.',
     'I talk to Claude on my phone and it files tasks and notes into Notion.',
     'The car broker template reshaped for other markets.',
     'A marketplace where buyers ask for quotes and a team answers them.',
@@ -434,4 +434,13 @@ test('validateProjects: accessTo is optional, needs an access request, and is sh
   assert.ok(has(mutate((l) => { l[0].accessTo = 'x'.repeat(41); }), 'car-broker', /accessTo is longer than 40/));
   assert.deepEqual(mutate((l) => { l[0].accessTo = 'x'.repeat(40); }), [], 'at the limit is fine');
   assert.ok(has(mutate((l) => { l[0].accessTo = 'a — b'; }), 'car-broker', /accessTo has a dash/));
+});
+
+// ---- This website, project 2: the owner's words (2026-10-27). Claude is credited for the build; the row labelled "Built with" starts with the tool. ----
+test('This website: what it does, what it is built with and where it stands are the approved text', () => {
+  const site = plain(PROJECTS).find((p) => p.id === 'site');
+  assert.equal(site.builtWith, 'Claude, in plain HTML, CSS and JavaScript, with three.js and GSAP for the 3D. No framework.');
+  assert.equal(site.stands, 'Live and still growing. It will keep growing as new projects happen and I keep expanding it.');
+  assert.ok(site.builtWith.length <= 120 && site.stands.length <= 140 && site.oneLine.length <= 300);
+  assert.doesNotMatch(site.oneLine + site.builtWith + site.stands, /built with AI|an AI by|Fable|Opus|Sonnet/, 'the credit goes to Claude as a whole');
 });

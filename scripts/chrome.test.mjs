@@ -48,6 +48,13 @@ test('the visitor log lives in the footer, left of the copyright, with email and
   assert.match(foot, /<div class="copyright">&copy; 2026 Max Duffaud Bibas <span class="egg" onclick="openStory\(\)">\.<\/span><\/div>/);
 });
 
+// The owner's credit line (2026-10-27): plain text after the links, no logo and no link.
+test('the footer carries a plain "Built with Claude" line after the links', () => {
+  const foot = html.slice(html.indexOf('<footer'), html.indexOf('</footer>'));
+  assert.match(foot, />linkedin<\/a>\s*<span class="built-with">Built with Claude<\/span>\s*<\/div>/);
+  assert.equal([...foot.matchAll(/Built with Claude/g)].length, 1);
+});
+
 test('footer css (chrome.css): a hairline, mono type, the copyright on the right, stacked on phones', () => {
   const f = rule(css.chrome, 'footer');
   assert.match(f, /border-top:\s*1px solid var\(--rule\)/);
