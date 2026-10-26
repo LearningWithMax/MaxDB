@@ -42,8 +42,10 @@
 }
 
 /* ---------- the album buttons ---------- */
-.trip-albums{display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-8); margin:var(--sp-16) 0 0;}
-.trip-albums .kicker{margin-right:var(--sp-4);}
+.trip-albums{display:flex; align-items:baseline; gap:var(--sp-12); margin:var(--sp-16) 0 0;}
+.trip-albums .kicker{flex:0 0 auto;}
+/* the buttons wrap inside their own list, so a second row starts under the first button, not under the label */
+.trip-album-list{display:flex; flex-wrap:wrap; gap:var(--sp-8); min-width:0;}
 
 /* ---------- the plain stop list (the fallback) ---------- */
 .trip-stops{list-style:none; margin:var(--sp-24) 0 0; padding:0; display:grid; gap:var(--sp-12); font:400 15px/1.5 var(--font-sans); color:var(--text-2);}

@@ -75,8 +75,9 @@ footer a:hover{color:var(--ink);}
 footer .built-with{flex:0 0 auto; text-align:center;}
 footer .copyright{flex:1 1 0; text-align:right;}
 @media (max-width:700px){
-  footer{flex-direction:column; align-items:flex-start;}
-  footer .footer-left, footer .built-with, footer .copyright{flex:0 0 auto; text-align:left;}
+  footer{flex-direction:column; align-items:center;}
+  footer .footer-left, footer .built-with, footer .copyright{flex:0 0 auto; text-align:center;}
+  footer .footer-left{justify-content:center;}
 }
 
 /* paper glow, continued: a soft warm halo around the dark objects and a warm edge on the cards. Static, paper only. */

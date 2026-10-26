@@ -73,8 +73,8 @@ test('css/trip.css: the site fonts on the globe card and list: serif city, mono 
   assert.match(trip, /\.globe-stop-btn,[^{]*\.globe-card-what\s*\{[^}]*font-family:\s*var\(--font-sans\)/);
 });
 
-test('css/trip.css: the album row wraps, and the plain stop list has mono numbers and kind tags', () => {
-  assert.match(block(trip, '.trip-albums'), /flex-wrap:\s*wrap/);
+test('css/trip.css: the album buttons wrap inside their list, and the plain stop list has mono numbers and kind tags', () => {
+  assert.match(block(trip, '.trip-album-list'), /flex-wrap:\s*wrap/);
   assert.match(block(trip, '.trip-stops'), /list-style:\s*none/);
   assert.match(block(trip, '.trip-stop-n'), /var\(--font-mono\)/);
   assert.match(block(trip, '.trip-stop-kind'), /var\(--font-mono\)/);

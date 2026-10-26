@@ -23,10 +23,11 @@
 .album-coming-soon .icon{font-size:30px; margin-bottom:var(--sp-8);}
 .album-coming-soon p{font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); margin:0;}
 
-.album-photo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px 18px;}
+/* three photos to a row, two on a phone; a short last row is centered */
+.album-photo-grid{display:flex; flex-wrap:wrap; justify-content:center; gap:20px 18px;}
 .album-photo-card{
-  position:relative; border-radius:6px; overflow:hidden; cursor:pointer;
-  box-shadow:0 14px 28px rgba(0,0,0,0.18); background:#fff; padding:8px 8px 24px;
+  position:relative; border-radius:6px; overflow:hidden; cursor:pointer; display:flex; flex-direction:column; width:calc((100% - 36px) / 3);
+  box-shadow:0 14px 28px rgba(0,0,0,0.18); background:#fff; padding:8px 8px 12px;
   transition:transform .15s ease;
 }
 .album-photo-card:hover{transform:translateY(-3px);}
@@ -46,8 +47,8 @@
   width:100%; aspect-ratio:4/3; border-radius:3px; object-fit:cover; display:block;
 }
 .album-photo-caption{
-  position:absolute; bottom:6px; left:8px; right:8px; font-size:11px; color:#8a7454; font-weight:700; text-align:center;
-}
+  margin:8px 0 0; padding:0 28px; font-size:11px; line-height:1.35; color:#8a7454; font-weight:700; text-align:center; text-wrap:balance;
+}   /* in the flow, so a long caption grows the card; the side room keeps it off the molecule mark */
 
 .photo-lightbox-overlay{
   position:fixed; inset:0; background:rgba(10,9,8,0.85); z-index:400;
@@ -74,7 +75,7 @@
 }
 
 @media (max-width:700px){
-  .album-photo-grid{grid-template-columns:repeat(2, 1fr);}
+  .album-photo-card{width:calc((100% - 18px) / 2);}
   .album-inner{padding:var(--sp-24) var(--sp-16);}
 }
 

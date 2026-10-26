@@ -57,7 +57,7 @@ test('the footer carries a plain "Built with Claude" line in the middle, between
   assert.match(rule(css.chrome, 'footer .copyright'), /flex:\s*1 1 0/);
   assert.match(rule(css.chrome, 'footer .built-with'), /flex:\s*0 0 auto/);
   assert.match(rule(css.chrome, 'footer .built-with'), /text-align:\s*center/);
-  assert.match(css.chrome, /@media\s*\(max-width:\s*700px\)\s*\{[^@]*footer \.footer-left, footer \.built-with, footer \.copyright\s*\{[^}]*flex:\s*0 0 auto[^}]*text-align:\s*left/, 'stacked and left-aligned on a phone');
+  assert.match(css.chrome, /@media\s*\(max-width:\s*700px\)\s*\{[^@]*footer \.footer-left, footer \.built-with, footer \.copyright\s*\{[^}]*flex:\s*0 0 auto[^}]*text-align:\s*center/, 'stacked and centered on a phone');
 });
 
 test('footer css (chrome.css): a hairline, mono type, the copyright on the right, stacked on phones', () => {
