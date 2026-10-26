@@ -79,3 +79,24 @@ test('css/trip.css: the album row wraps, and the plain stop list has mono number
   assert.match(block(trip, '.trip-stop-n'), /var\(--font-mono\)/);
   assert.match(block(trip, '.trip-stop-kind'), /var\(--font-mono\)/);
 });
+
+// ---- the controls on a wide window (owner, 2026-10-27): the route list sits down the right side, and the slider used to run under it ----
+test('css/trip.css: in a wide window the controls end before the route list, so the list is never covered', () => {
+  const m = trip.match(/@container \(min-width: 821px\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(m, 'a container rule for the wide window');
+  assert.match(m[1], /\.trip-globe \.globe-bar\s*\{[^}]*right:\s*calc\(var\(--globe-legend-w, 236px\) \+ var\(--globe-gap, 14px\) \+ var\(--globe-gap-l, 16px\) \+ var\(--sp-8\)\)/, 'the bar stops left of the list');
+  assert.match(globe, /@container \(max-width: 820px\)\s*\{[\s\S]*?\.globe-legend\{[^}]*top:12px/, 'the list is a strip along the top up to 820 px, so the wide rule starts exactly where the list moves to the side');
+});
+
+test('css/trip.css: with a mouse the buttons and the slider are a little smaller; touch keeps the 44 px targets', () => {
+  const m = trip.match(/@media \(pointer: fine\)\s*\{\s*@container \(min-width: 821px\)\s*\{([\s\S]*?)\n  \}\s*\n\}/);
+  assert.ok(m, 'a mouse-only rule for the wide window');
+  assert.match(m[1], /\.trip-globe \.globe-play,\s*\.trip-globe \.globe-restart\s*\{[^}]*min-height:\s*36px[^}]*min-width:\s*36px[^}]*padding:\s*6px 12px[^}]*font-size:\s*12px/);
+  assert.match(m[1], /\.trip-globe \.globe-scrub\s*\{[^}]*min-height:\s*36px/);
+  assert.doesNotMatch(trip.replace(m[0], ''), /\.globe-(play|restart)[^{]*\{[^}]*min-height:\s*3\d/, 'the 36 px size exists only under the mouse-only rule');
+});
+
+test('css/trip.css: the route list sits above the globe\'s dark bottom gradient, so its last stops are not dimmed', () => {
+  assert.match(block(trip, '.trip-globe .globe-legend'), /z-index:\s*1/);
+  assert.match(globe, /root\.append|\.globe-scrim/, 'the gradient is the globe\'s own');
+});

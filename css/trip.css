@@ -26,6 +26,21 @@
 .trip-globe .globe-stop-btn, .trip-globe .globe-card-what{font-family:var(--font-sans);}
 .trip-globe .globe-play, .trip-globe .globe-restart{font-family:var(--font-mono); font-weight:400;}
 
+/* the route list above the globe's dark bottom gradient, which otherwise dims the last stops */
+.trip-globe .globe-legend{z-index:1;}
+
+/* a wide window (the route list sits down the right side): the controls stop before the list instead of running under it, and with a mouse the
+   buttons and the slider are a little smaller; touch keeps the 44 px targets. The globe's own rules start the strip layout at 820 px, so these start at 821. */
+@container (min-width: 821px){
+  .trip-globe .globe-bar{right:calc(var(--globe-legend-w, 236px) + var(--globe-gap, 14px) + var(--globe-gap-l, 16px) + var(--sp-8)); gap:var(--sp-8);}
+}
+@media (pointer: fine){
+  @container (min-width: 821px){
+    .trip-globe .globe-play, .trip-globe .globe-restart{min-height:36px; min-width:36px; padding:6px 12px; font-size:12px;}
+    .trip-globe .globe-scrub{min-height:36px;}
+  }
+}
+
 /* ---------- the album buttons ---------- */
 .trip-albums{display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-8); margin:var(--sp-16) 0 0;}
 .trip-albums .kicker{margin-right:var(--sp-4);}

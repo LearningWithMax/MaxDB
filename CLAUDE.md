@@ -59,10 +59,12 @@ originals/     full-size photos, gitignored
   Stills (needs Chrome or Edge, and ffmpeg: `winget install Gyan.FFmpeg --source winget`): with `node scripts/serve.mjs` running,
   `node scripts/clips/capture.mjs site` takes 2560 by 1600 PNGs of the real site, and `node scripts/clips/still.mjs` makes a WebP of one.
   Details in `docs/superpowers/notes/2026-10-25-sharp-captures.md` and `2026-10-25-projects-slider-results.md`.
-- Trip: the globe (`modules/globe.js`, Fable's, do not edit without asking him) is built by `js/trip.js` on the first visit to
+- Trip: the globe (`modules/globe.js`, Fable's, do not edit without asking him; Fable is a Claude model, and the owner credits everything on the site to Claude) is built by `js/trip.js` on the first visit to
   `#trip` and removed when you leave. The words of the 11 stops are `TRIP_STOPS` in `modules/trip-stops.js`; after changing them run
   `node scripts/trip-list.mjs` (it rewrites the plain stop list in `index.html`, and `check.mjs` fails if they differ). Without WebGL
   the flat map and that list show. The Home card image is rendered from the real globe with `scripts/stills/trip.html`.
+  Site-side adjustments to the globe go in `css/trip.css` and `js/trip.js`, not in the globe's own files (for example the controls stop before the route list in a wide window, and the list
+  sits above the globe's dark gradient).
   `js/trip.js` also keeps the globe's route list scrolled to the highlighted stop (`tripFollowStop`), because on a phone that list is a sideways strip. The glide takes `TRIP_FOLLOW_MS` (1200) there; raise it for a lazier glide.
 
 ## Search and sharing tags
