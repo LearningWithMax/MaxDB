@@ -43,7 +43,7 @@ originals/     full-size photos, gitignored
   `css/tokens.css`; do not write colors elsewhere (the dark objects have fixed `--board-*` tokens). localStorage keys: `mdb-theme`
   (`dark` or `light`), `mdb-consent`; session key `mdb-opening`. GA4 loads only if `mdb-consent === 'accepted'`.
 - Palette (dark / paper): bg `#15130f` / `#f2ece1`, ink `#f2ece1` / `#16130e`, gold `#d9ae4c` / `#a47a16`, gunmetal `#9aa3b0` / `#4b5059`,
-  teal `#3fcf8d` / `#0d7040`, orange `#ff7a4d` / `#b8431f`. The look is in `docs/superpowers/specs/2026-10-21-art-direction-brief.md`.
+  teal `#3fcf8d` / `#0d7040`, orange `#ff7a4d` / `#b8431f`, blue `#4f8dff` / `#1f5fd6` (the Operations reading; gunmetal stays for the surname and the logo). The look is in `docs/superpowers/specs/2026-10-21-art-direction-brief.md`.
 - Every CV text block exists in four readings (`data-lens-group` with `data-lens-text="all|chem|ops|cust"`). The board reads the
   `.job[data-board]` data attributes, and the Home departures preview must repeat the first three jobs; `check.mjs` verifies both.
 - Map data lives in `js/data.js`: `countryData` (tier + note), `countryAlbums` (kicker, flag gradient, intro),
@@ -105,8 +105,10 @@ is `next`); merging into `main` goes live in about a minute and needs the owner'
      The demo online is an earlier version than the code on his PC (its Sales path returns "page not found"), which "Where it stands" says.
    - This website: text done on 2026-10-27 (the point of the site is a showcase of him: professional, creative and tech sides; the credit goes to Claude as a whole, never to
      individual models; a plain "Built with Claude" line sits in the footer). The "Built with" row starts with the tool because its label already says "Built with".
-   - Next: the organizer, the broker template for any market and the quote marketplace (the marketplace code is in a folder next to this repo, named for the client it started
-     with; read it to write its text and its access button, and never copy anything private from it into this public repo).
+   - Quote marketplace: text done on 2026-10-27 (a B2B portal, with an "Inside the dashboard" row and the button "Ask for access · coming soon", set with `soon: true`). Its code is in
+     a folder next to this repo, named for the client it started with; never copy anything private from it into this public repo. When a generic template version of it exists, update the text and
+     drop `soon`. Note that its own notes allow payment after the results for some orders, so the public text does not fix the order of paying.
+   - Next: the organizer and the broker template for any market. Reading buttons on the CV: all, customer-facing, operations, chemistry (`LENS_ORDER` in `modules/board-data.js`); the Home rows keep chem, ops, cust.
 3. The "How I work" text (he sent two example sites: a four-step process with a discovery call, and a short FAQ with real promises such as a reply time). The point is that the
    templates are a base that is personalized, and that specific or unique tools can be built for a person; both "look what I can do" and "contact me for one like it". Decide with him
    where it goes (a block on the Projects page, a line in each template panel, or Home). Only claims he can stand behind. Idea for after that: sell the basic templates on a

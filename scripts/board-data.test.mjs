@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseJobs, dotFor, rowsFromDom } from '../modules/board-data.js';
+import { parseJobs, dotFor, rowsFromDom, LENS_ORDER } from '../modules/board-data.js';
 
 const row = (over = {}) => ({
   year: '2025', place: 'Yashresh', company: 'Cann.Edenn',
@@ -56,4 +56,8 @@ test('rowsFromDom reads the data attributes of every .job[data-board]', () => {
   assert.deepEqual(rows[0].lines, { all: 'A', chem: 'B', ops: 'C', cust: 'D' });
   assert.deepEqual(rows[0].weights, { chem: 0.4, ops: 0.6, cust: 1 });
   assert.equal(rows[0].company, 'Avicampo');
+});
+
+test('the four reading buttons run all, customer-facing, operations, chemistry (owner, 2026-10-27)', () => {
+  assert.deepEqual(LENS_ORDER, ['all', 'cust', 'ops', 'chem']);
 });

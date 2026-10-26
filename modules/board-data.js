@@ -2,7 +2,7 @@
 // No DOM and no three.js here, so Node tests can import it. The page is the source of truth: each job on the CV
 // carries data-board attributes, and the board only reads them (a fact is written once).
 
-export const LENS_ORDER = ['all', 'chem', 'ops', 'cust'];
+export const LENS_ORDER = ['all', 'cust', 'ops', 'chem'];       // the order of the reading buttons
 export const LIMITS = { note: 28, place: 12, company: 10 };
 // The characters the flaps can show (the board's glyph wheel, without the weight dots).
 export const BOARD_CHARS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-+:&/';

@@ -35,7 +35,7 @@ test('the one lines are the approved text', () => {
     'A showcase of me: my professional experience in the CV, my creative side in the look, and my tech side in the site itself and its animations, including a 3D flight over the places where I was born, studied and worked. I bring the vision and lead, and Claude brainstorms and builds it with me.',
     'I talk to Claude on my phone and it files tasks and notes into Notion.',
     'The car broker template reshaped for other markets.',
-    'A marketplace where buyers ask for quotes and a team answers them.',
+    "A B2B portal where companies sign up and are vetted by the seller's staff. Once approved, they browse the catalog and send an inquiry for products or services, and the seller replies with a quote. If it suits them, they accept and pay, then send the details for delivery, all inside the portal.",
   ]);
 });
 
@@ -244,7 +244,7 @@ test('visualHtml: an image is one lazy img with its size and description (the th
 test('accessHref: a mailto to the CV address, with the project in the subject and a short greeting, all encoded', () => {
   assert.equal(accessHref(PROJECTS[0]),
     'mailto:duffaud.max@gmail.com?subject=Demo%20access%3A%20Car%20broker%20template&body=Hi%20Max%2C%0A%0AI%20saw%20Car%20broker%20template%20on%20your%20site%20and%20would%20like%20access%20to%20the%20dashboard.');
-  assert.match(accessHref(PROJECTS[4]), /would%20like%20to%20see%20the%20demo\.$/, 'a project with no accessTo keeps the general words');
+  assert.match(accessHref(entry(4, { soon: undefined })), /would%20like%20to%20see%20the%20demo\.$/, 'a project that is open and has no accessTo keeps the general words');
   const tricky = accessHref(entry(0, { title: 'Q&A "demo" <b>' }));
   assert.match(tricky, /subject=Demo%20access%3A%20Q%26A%20%22demo%22%20%3Cb%3E&body=/);
   assert.equal(tricky.split('?').length, 2, 'one query string');
@@ -288,7 +288,7 @@ test('panelHtml: the buttons are links named for their project, a public demo fi
   const car = panelHtml(PROJECTS[0]);
   assert.match(car, /<p class="panel-action"><a class="pill panel-button" href="https:\/\/mdesigns-broker-demo\.vercel\.app" target="_blank" rel="noopener" aria-label="Visit Car broker template \(opens in a new tab\)">Visit<\/a><a class="pill panel-button" href="mailto:duffaud\.max@gmail\.com\?subject=[^"]+" aria-label="Ask for access to the dashboard of Car broker template">Ask for access to the dashboard<\/a><\/p>/);
   const ask = panelHtml(PROJECTS[4]);
-  assert.match(ask, /<p class="panel-action"><a class="pill panel-button" href="mailto:[^"]+" aria-label="Ask for access to Quote marketplace">Ask for access<\/a><\/p>/);
+  assert.match(ask, /<p class="panel-action"><a class="pill panel-button" href="mailto:[^"]+" aria-label="Ask for access to Quote marketplace, coming soon">Ask for access \u00b7 coming soon<\/a><\/p>/);
   assert.doesNotMatch(ask, /target=/, 'an email link does not open a tab');
   assert.match(panelHtml(PROJECTS[1]), /<a class="pill panel-button" href="#projects\/site" aria-label="See how This website is built">See how it is built<\/a>/);
   for (const i of [2, 3]) { const html = panelHtml(PROJECTS[i]); assert.doesNotMatch(html, /panel-action|<a\b/, PROJECTS[i].id); }
@@ -388,7 +388,7 @@ test('the car broker text: what it does, the dashboard, built with and where it 
   assert.equal(car.stands, "Live as a demo on invented data. It is an earlier version, and a newer one is built but not live yet.");
   assert.ok(car.oneLine.length <= 300 && car.dashboard.length <= 300);
   assert.doesNotMatch(car.oneLine, /answers? from a private dashboard/, 'the broker answers by phone, text or email, not from the dashboard');
-  assert.deepEqual(plain(PROJECTS).filter((p) => p.dashboard !== undefined).map((p) => p.id), ['car-broker'], 'only the car broker has a dashboard row');
+  assert.deepEqual(plain(PROJECTS).filter((p) => p.dashboard !== undefined).map((p) => p.id), ['car-broker', 'quote-market'], 'only the car broker and the quote marketplace have a dashboard row');
   for (const p of plain(PROJECTS)) assert.ok(p.oneLine.length <= 300, p.id + ' one line is at most 300 characters');
 });
 
@@ -414,7 +414,7 @@ test('noscriptListHtml: the dashboard line is in the plain list too, between wha
   const at = (s) => car.indexOf(s);
   assert.ok(at(escapeHtml(PROJECTS[0].oneLine)) > 0 && at(escapeHtml(PROJECTS[0].oneLine)) < at(' Inside the dashboard: ' + escapeHtml(PROJECTS[0].dashboard)));
   assert.ok(at(' Inside the dashboard: ') < at(' Built with: '));
-  assert.equal(count(html, /Inside the dashboard: /g), 1);
+  assert.equal(count(html, /Inside the dashboard: /g), 2, 'the car broker and the quote marketplace');
 });
 
 // ---- the car broker's button asks for the dashboard (owner, 2026-10-27): its site is public, only the dashboard is private ----
@@ -423,7 +423,7 @@ test('the car broker button says what is private: the dashboard, and only the ca
   assert.deepEqual(plain(PROJECTS).filter((p) => p.accessTo !== undefined).map((p) => p.id), ['car-broker']);
   const html = panelHtml(PROJECTS[0]);
   assert.match(html, /aria-label="Ask for access to the dashboard of Car broker template">Ask for access to the dashboard<\/a>/);
-  assert.match(panelHtml(PROJECTS[4]), /aria-label="Ask for access to Quote marketplace">Ask for access<\/a>/, 'the marketplace keeps the general button');
+  assert.match(panelHtml(PROJECTS[4]), /aria-label="Ask for access to Quote marketplace, coming soon">Ask for access \u00b7 coming soon<\/a>/, 'the marketplace is not open yet, and its button says so');
 });
 
 test('validateProjects: accessTo is optional, needs an access request, and is short text without dashes', () => {
@@ -443,4 +443,34 @@ test('This website: what it does, what it is built with and where it stands are 
   assert.equal(site.stands, 'Live and still growing. It will keep growing as new projects happen and I keep expanding it.');
   assert.ok(site.builtWith.length <= 120 && site.stands.length <= 140 && site.oneLine.length <= 300);
   assert.doesNotMatch(site.oneLine + site.builtWith + site.stands, /built with AI|an AI by|Fable|Opus|Sonnet/, 'the credit goes to Claude as a whole');
+});
+
+// ---- Quote marketplace (owner, 2026-10-27): his own words, and an access button that says it is coming soon ----
+test('the quote marketplace text: what it does, the dashboard, built with and where it stands, as the owner approved them', () => {
+  const q = plain(PROJECTS).find((p) => p.id === 'quote-market');
+  assert.equal(q.oneLine, "A B2B portal where companies sign up and are vetted by the seller's staff. Once approved, they browse the catalog and send an inquiry for products or services, and the seller replies with a quote. If it suits them, they accept and pay, then send the details for delivery, all inside the portal.");
+  assert.equal(q.dashboard, "Vetting queue for new companies, requests with a status and a message thread, quotes and payment confirmation, a catalog with stock and prices, editable ranks and permissions, and an audit log.");
+  assert.equal(q.builtWith, "Plain HTML, CSS and JavaScript, with a small Node server on Vercel and a Supabase database. English and Spanish.");
+  assert.equal(q.stands, "A working private demo on invented data. Coming soon.");
+  assert.ok(q.oneLine.length <= 300 && q.dashboard.length <= 300 && q.builtWith.length <= 120 && q.stands.length <= 140);
+  assert.doesNotMatch([q.oneLine, q.dashboard, q.builtWith, q.stands].join(' '), /Chacao|Laboratorios|Aguair|desinlab|Venezuela|Yaracuy|INSAI|bol[ií]var/i, 'no client name or detail on a public page');
+});
+
+test('a project that is not open yet says so on its access button, in the email and for screen readers', () => {
+  const q = PROJECTS[4];
+  assert.equal(plain(q).soon, true);
+  assert.deepEqual(plain(PROJECTS).filter((p) => p.soon).map((p) => p.id), ['quote-market']);
+  const [a] = plain(projectActions(q));
+  assert.equal(a.label, 'Ask for access \u00b7 coming soon');
+  assert.equal(a.name, 'Ask for access to Quote marketplace, coming soon');
+  assert.equal(accessHref(q), 'mailto:duffaud.max@gmail.com?subject=Demo%20access%3A%20Quote%20marketplace&body=Hi%20Max%2C%0A%0AI%20saw%20Quote%20marketplace%20on%20your%20site%20and%20would%20like%20to%20be%20told%20when%20I%20can%20get%20access.');
+  assert.match(accessHref(entry(0, { soon: true })), /would%20like%20to%20be%20told%20when%20I%20can%20get%20access%20to%20the%20dashboard\.$/, 'with a private part named, the email names it');
+  assert.equal(plain(projectActions(entry(0)))[1].label, 'Ask for access to the dashboard', 'a project that is open keeps its plain label');
+});
+
+test('validateProjects: soon is optional, true only, and needs an access request', () => {
+  assert.deepEqual(mutate((l) => { delete l[4].soon; }), [], 'none is fine');
+  assert.ok(has(mutate((l) => { l[4].soon = 'yes'; }), 'quote-market', /soon must be true/));
+  assert.ok(has(mutate((l) => { l[4].soon = false; }), 'quote-market', /soon must be true/));
+  assert.ok(has(mutate((l) => { delete l[4].access; }), 'quote-market', /soon needs access "request"/));
 });

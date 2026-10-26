@@ -5,7 +5,7 @@
   color-scheme:dark;          /* scrollbars and native controls follow the theme */
   /* color, dark */
   --bg:#15130f; --panel:#1c1a15; --ink:#f2ece1; --text-2:#cfc6b4; --mute:#968d7c; --rule:#322e26;
-  --gold:#d9ae4c; --gold-text:#d9ae4c; --gunmetal:#9aa3b0; --teal:#3fcf8d; --orange:#ff7a4d;
+  --gold:#d9ae4c; --gold-text:#d9ae4c; --gunmetal:#9aa3b0; --teal:#3fcf8d; --orange:#ff7a4d; --blue:#4f8dff;
   --bg-glass:rgba(21,19,15,.9);
   --footer-bg:#0e0c09; --footer-sheen:rgba(255,255,255,.05); --footer-ridge:rgba(255,255,255,.05); --footer-edge:rgba(255,255,255,.09);   /* the footer plate */
   --footer-ink:var(--mute);                                                                                                      /* footer text: 4.5 or more on its worst pixel */
@@ -23,7 +23,7 @@
   --globe-mono:var(--font-mono);
 
   /* a lens color is only used where a lens is named */
-  --lens-chem:var(--teal); --lens-ops:var(--gunmetal); --lens-cust:var(--orange);
+  --lens-chem:var(--teal); --lens-ops:var(--blue); --lens-cust:var(--orange);
 
   /* type: each stack ends in a generic family, so text stays visible while a font loads */
   --font-serif:"Instrument Serif", Georgia, "Times New Roman", serif;
@@ -44,7 +44,7 @@
 :root[data-theme="light"]{
   color-scheme:light;
   --bg:#f2ece1; --panel:#f8f3e9; --ink:#16130e; --text-2:#3d3829; --mute:#6a6355; --rule:#cdc3ae;
-  --gold:#a47a16; --gold-text:#8a640f; --gunmetal:#4b5059; --teal:#0d7040; --orange:#b8431f;
+  --gold:#a47a16; --gold-text:#8a640f; --gunmetal:#4b5059; --teal:#0d7040; --orange:#b8431f; --blue:#1f5fd6;
   --bg-glass:rgba(242,236,225,.9);
   --footer-bg:#e6dec9; --footer-sheen:rgba(255,255,255,.4); --footer-ridge:rgba(22,19,14,.05); --footer-edge:rgba(255,255,255,.75);
   --footer-ink:#5c5547;                  /* a little darker than mute, because the plate is darker than the page and mute fell to 4.03 on a ridge row */

@@ -2,7 +2,8 @@
 // This file is public on GitHub Pages, so a project that must stay private is simply not in it (there is no "public" flag), and no login
 // is ever written here. Each entry has either an image (an HD still, with a thumb at half size) or a figure (a drawn diagram), never both,
 // and no video. Only a live project may link: `href` opens the real thing in a new tab, `case` opens its case view (#projects/<case>).
-// `access: 'request'` shows an "Ask for access" email button for a project whose demo sits behind a login; accessTo names the private part ("the dashboard") when the rest is public.
+// `access: 'request'` shows an "Ask for access" email button for a project whose demo sits behind a login; accessTo names the private part ("the dashboard") when the rest is public;
+// `soon: true` adds "coming soon" to that button and asks to be told when access opens.
 // An optional note (one short sentence) shows under the title, for something a visitor should know before they look, such as a redesign on its way.
 // An optional dashboard (up to 300 characters) adds an "Inside the dashboard" row for a project with a private side that cannot be shown.
 
@@ -47,10 +48,11 @@ const PROJECTS = [
     figure: { kind: 'words', items: ['cars', 'homes', 'places', 'boats', 'motorcycles'] },
   },
   {
-    id: 'quote-market', title: 'Quote marketplace', status: 'building', order: 5, access: 'request',
-    oneLine: 'A marketplace where buyers ask for quotes and a team answers them.',
-    builtWith: 'Plain HTML, CSS and JavaScript, with Node functions behind a sign-in.',
-    stands: 'In testing on invented data, and being made generic for many kinds of business.',
+    id: 'quote-market', title: 'Quote marketplace', status: 'building', order: 5, access: 'request', soon: true,
+    oneLine: "A B2B portal where companies sign up and are vetted by the seller's staff. Once approved, they browse the catalog and send an inquiry for products or services, and the seller replies with a quote. If it suits them, they accept and pay, then send the details for delivery, all inside the portal.",
+    dashboard: "Vetting queue for new companies, requests with a status and a message thread, quotes and payment confirmation, a catalog with stock and prices, editable ranks and permissions, and an audit log.",
+    builtWith: "Plain HTML, CSS and JavaScript, with a small Node server on Vercel and a Supabase database. English and Spanish.",
+    stands: "A working private demo on invented data. Coming soon.",
     figure: { kind: 'flow', items: ['request', 'quote', 'confirm'] },
   },
 ];
@@ -128,6 +130,10 @@ function validateProjects(list, opts){
         if(hasBannedDash(p.accessTo)) bad('accessTo has a dash the copy rules ban');
       }
     }
+    if(p.soon !== undefined){
+      if(p.access !== 'request') bad('soon needs access "request"');
+      if(p.soon !== true) bad('soon must be true');
+    }
     if(p.figure){
       if(p.figure.kind !== 'words' && p.figure.kind !== 'flow') bad('figure kind must be words or flow');
       if(!p.figure.items || !p.figure.items.length) bad('figure has no items');
@@ -190,7 +196,8 @@ function visualHtml(p, opts){
 // The email a visitor sends to ask for a project's demo login. The login itself is given on a call and is never written here.
 function accessHref(p){
   const subject = 'Demo access: ' + p.title;
-  const body = 'Hi Max,\n\nI saw ' + p.title + ' on your site and would like ' + (p.accessTo ? 'access to ' + p.accessTo : 'to see the demo') + '.';
+  const want = p.soon ? 'to be told when I can get access' + (p.accessTo ? ' to ' + p.accessTo : '') : p.accessTo ? 'access to ' + p.accessTo : 'to see the demo';
+  const body = 'Hi Max,\n\nI saw ' + p.title + ' on your site and would like ' + want + '.';
   return 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
@@ -201,7 +208,7 @@ function projectActions(p){
   const out = [];
   if(p.href) out.push({ kind: 'visit', href: p.href, label: 'Visit', name: 'Visit ' + p.title + ' (opens in a new tab)', newTab: true });
   if(p.case) out.push({ kind: 'case', href: '#projects/' + p.case, label: 'See how it is built', name: 'See how ' + p.title + ' is built', newTab: false });
-  if(p.access === 'request') out.push({ kind: 'access', href: accessHref(p), label: p.accessTo ? 'Ask for access to ' + p.accessTo : 'Ask for access', name: p.accessTo ? 'Ask for access to ' + p.accessTo + ' of ' + p.title : 'Ask for access to ' + p.title, newTab: false });
+  if(p.access === 'request') out.push({ kind: 'access', href: accessHref(p), label: (p.accessTo ? 'Ask for access to ' + p.accessTo : 'Ask for access') + (p.soon ? ' · coming soon' : ''), name: (p.accessTo ? 'Ask for access to ' + p.accessTo + ' of ' + p.title : 'Ask for access to ' + p.title) + (p.soon ? ', coming soon' : ''), newTab: false });
   return out;
 }
 

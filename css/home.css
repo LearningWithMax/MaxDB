@@ -72,7 +72,7 @@ h1.name em{font-style:italic; color:var(--gunmetal);}
 .lens-btn .lens-sub{font:400 11px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
 .dot{width:9px; height:9px; border-radius:50%; display:inline-block; align-self:center; justify-self:end;}
 .dot-chem{background:var(--teal);}
-.dot-ops{background:var(--gunmetal);}
+.dot-ops{background:var(--blue);}
 .dot-cust{background:var(--orange);}
 :root[data-theme="light"] .dot-cust{background:#d9532a;}
 

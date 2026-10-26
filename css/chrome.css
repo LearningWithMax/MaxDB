@@ -59,7 +59,7 @@ nav{
 }
 
 /* footer: its own surface (a darker plate with fine ridges and a lit top edge, a cousin of the glass banner), a hairline, mono type;
-   the visitor log, email and LinkedIn on the left, the copyright on the right */
+   the visitor log, email and LinkedIn on the left, Built with Claude in the middle, the copyright on the right */
 footer{
   background-color:var(--footer-bg);
   background-image:linear-gradient(180deg, var(--footer-sheen), transparent 70%), repeating-linear-gradient(180deg, var(--footer-ridge) 0 1px, transparent 1px 4px);
@@ -69,13 +69,14 @@ footer{
   display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--sp-16);
   font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--footer-ink);
 }
-.footer-left{display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-24);}
+.footer-left{display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-24); flex:1 1 0;}
 footer a{color:var(--text-2); transition:color .16s ease-out;}
 footer a:hover{color:var(--ink);}
-footer .copyright{text-align:right;}
+footer .built-with{flex:0 0 auto; text-align:center;}
+footer .copyright{flex:1 1 0; text-align:right;}
 @media (max-width:700px){
   footer{flex-direction:column; align-items:flex-start;}
-  footer .copyright{text-align:left;}
+  footer .footer-left, footer .built-with, footer .copyright{flex:0 0 auto; text-align:left;}
 }
 
 /* paper glow, continued: a soft warm halo around the dark objects and a warm edge on the cards. Static, paper only. */

@@ -11,7 +11,7 @@ const COLS = { dot: 1, year: 4, place: 12, note: 28 };     // the company column
 const LENS = {
   all:  { name: 'All',             title: 'ALL PATHS, ONE PERSON', color: '#e8e4da' },
   chem: { name: 'Chemistry & R&D', title: 'CHEMISTRY AND R&D',     color: '#3fcf8d' },
-  ops:  { name: 'Operations',      title: 'OPERATIONS',            color: '#9aa3b0' },
+  ops:  { name: 'Operations',      title: 'OPERATIONS',            color: '#4f8dff' },
   cust: { name: 'Customer-Facing', title: 'CUSTOMER-FACING',       color: '#ff7a4d' },
 };
 const ORDER = LENS_ORDER;

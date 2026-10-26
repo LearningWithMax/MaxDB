@@ -15,11 +15,11 @@ function block(sel) {
 
 const DARK = {
   '--bg': '#15130f', '--panel': '#1c1a15', '--ink': '#f2ece1', '--text-2': '#cfc6b4', '--mute': '#968d7c', '--rule': '#322e26',
-  '--gold': '#d9ae4c', '--gold-text': '#d9ae4c', '--gunmetal': '#9aa3b0', '--teal': '#3fcf8d', '--orange': '#ff7a4d',
+  '--gold': '#d9ae4c', '--gold-text': '#d9ae4c', '--gunmetal': '#9aa3b0', '--teal': '#3fcf8d', '--orange': '#ff7a4d', '--blue': '#4f8dff',
 };
 const PAPER = {
   '--bg': '#f2ece1', '--panel': '#f8f3e9', '--ink': '#16130e', '--text-2': '#3d3829', '--mute': '#6a6355', '--rule': '#cdc3ae',
-  '--gold': '#a47a16', '--gold-text': '#8a640f', '--gunmetal': '#4b5059', '--teal': '#0d7040', '--orange': '#b8431f',
+  '--gold': '#a47a16', '--gold-text': '#8a640f', '--gunmetal': '#4b5059', '--teal': '#0d7040', '--orange': '#b8431f', '--blue': '#1f5fd6',
 };
 
 test('contrastRatio: black on white is 21 and the dark and paper backgrounds give the brief number', () => {
@@ -48,7 +48,7 @@ test('the objects stay dark in both themes: --board and --space are set once, in
 
 for (const [name, theme] of [['dark', DARK], ['paper', PAPER]]) {
   test(`${name}: text tokens are at least 4.5:1 on --bg and --panel, and --gold is at least 3:1 on --bg`, () => {
-    for (const k of ['--ink', '--text-2', '--mute', '--gold-text', '--gunmetal', '--teal', '--orange']) {
+    for (const k of ['--ink', '--text-2', '--mute', '--gold-text', '--gunmetal', '--teal', '--orange', '--blue']) {
       for (const surface of ['--bg', '--panel']) {
         const r = contrastRatio(theme[k], theme[surface]);
         assert.ok(r >= 4.5, `${k} on ${surface} is ${r.toFixed(2)}`);
@@ -68,7 +68,7 @@ test('every --font-* ends in a generic family, so a slow or blocked font never l
 test('layout tokens: the lens colors point at the lens tokens, spacing, radii and widths match the brief', () => {
   const root = block(':root');
   assert.equal(root['--lens-chem'], 'var(--teal)');
-  assert.equal(root['--lens-ops'], 'var(--gunmetal)');
+  assert.equal(root['--lens-ops'], 'var(--blue)');
   assert.equal(root['--lens-cust'], 'var(--orange)');
   const sp = { 4: '4px', 8: '8px', 12: '12px', 16: '16px', 24: '24px', 32: '32px', 48: '48px', 72: '72px' };
   for (const [n, v] of Object.entries(sp)) assert.equal(root['--sp-' + n], v, '--sp-' + n);
