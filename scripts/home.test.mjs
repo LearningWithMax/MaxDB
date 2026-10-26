@@ -10,9 +10,9 @@ const decode = (s) => s.replace(/&amp;/g, '&');
 test('Home has three lens links that open the CV on that lens, numbered 01 to 03', () => {
   const links = [...html.matchAll(/<a class="lens-btn" href="([^"]+)">\s*<span class="n">(\d\d)<\/span>\s*<strong>([^<]+)<\/strong>/g)].map((m) => [m[1], m[2], decode(m[3])]);
   assert.deepEqual(links, [
-    ['#cv/chem', '01', 'Chemistry & R&D'],
+    ['#cv/cust', '01', 'Customer-Facing'],
     ['#cv/ops', '02', 'Operations'],
-    ['#cv/cust', '03', 'Customer-Facing'],
+    ['#cv/chem', '03', 'Chemistry & R&D'],
   ]);
 });
 
@@ -26,7 +26,7 @@ test('the lens links are one ordered list: each row has a one-line description a
   assert.ok(list, 'ol.lens-list');
   const rows = [...list[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1]);
   assert.equal(rows.length, 3);
-  const dots = ['dot-chem', 'dot-ops', 'dot-cust'];
+  const dots = ['dot-cust', 'dot-ops', 'dot-chem'];
   rows.forEach((row, i) => {
     assert.match(row, /<span class="lens-sub">[^<]{10,}<\/span>/, 'row ' + (i + 1) + ' has a description');
     assert.ok(row.includes('<i class="dot ' + dots[i] + '"></i>'), 'row ' + (i + 1) + ' has ' + dots[i]);

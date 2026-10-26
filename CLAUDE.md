@@ -95,7 +95,7 @@ Copies of `lab/` (the early prototypes) and of the whole source are in `C:/Users
 is `next`); merging into `main` goes live in about a minute and needs the owner's explicit OK. Pushing works from Claude's shell because his GitHub sign-in is remembered.
 
 1. Just after the launch (the owner does these): run the link through LinkedIn's Post Inspector, then post; send the Search Console verification tag so it can be added
-   (see `docs/superpowers/notes/2026-10-25-seo-guide.md`). Later, optionally, a domain of his own.
+   (see `docs/superpowers/notes/2026-10-25-seo-guide.md`). He keeps the GitHub address for now (decided 2026-10-27); later, optionally, a domain of his own (it can point at GitHub Pages and keep the address if the host changes).
 2. Project texts, one project at a time with the owner (what exists now, what it becomes, why; he answers yes or no; the repo is public, so nothing may be invented). The Projects
    page carries a big "Work in progress" notice (`aside.projects-notice` in `index.html`, styled in `css/projects.css`; delete both when the projects settle). The one line may be up
    to 300 characters, and a project may have an optional `dashboard` row ("Inside the dashboard", up to 300).
@@ -107,8 +107,8 @@ is `next`); merging into `main` goes live in about a minute and needs the owner'
      individual models; a plain "Built with Claude" line sits in the footer). The "Built with" row starts with the tool because its label already says "Built with".
    - Quote marketplace: text done on 2026-10-27 (a B2B portal, with an "Inside the dashboard" row and the button "Ask for access · coming soon", set with `soon: true`). Its code is in
      a folder next to this repo, named for the client it started with; never copy anything private from it into this public repo. When a generic template version of it exists, update the text and
-     drop `soon`. Note that its own notes allow payment after the results for some orders, so the public text does not fix the order of paying.
-   - Next: the organizer and the broker template for any market. Reading buttons on the CV: all, customer-facing, operations, chemistry (`LENS_ORDER` in `modules/board-data.js`); the Home rows keep chem, ops, cust.
+     drop `soon`. The public text says accept, pay, then send the details for delivery.
+   - Next: the organizer and the broker template for any market. Reading buttons on the CV: all, customer-facing, operations, chemistry (`LENS_ORDER` in `modules/board-data.js`); the Home rows follow the same order.
 3. The "How I work" text (he sent two example sites: a four-step process with a discovery call, and a short FAQ with real promises such as a reply time). The point is that the
    templates are a base that is personalized, and that specific or unique tools can be built for a person; both "look what I can do" and "contact me for one like it". Decide with him
    where it goes (a block on the Projects page, a line in each template panel, or Home). Only claims he can stand behind. Idea for after that: sell the basic templates on a
