@@ -1,0 +1,29 @@
+/* Split-flap board on the CV page. The board itself is a dark object in both themes; the pills around it follow the site tokens.
+   Hidden until modules/board.js has started (no JavaScript or no WebGL means no board, and the full text below is the CV). */
+.cv-board{display:none; padding:var(--sp-8) 0 var(--sp-48);}
+.cv-board.on{display:block;}
+.cv-board-sub{margin:0 0 var(--sp-16); font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); max-width:60ch;}
+.cv-board-tabs{display:flex; gap:var(--sp-8); flex-wrap:wrap; margin-bottom:var(--sp-32);}
+.cv-board-tabs button{
+  display:inline-flex; align-items:center; gap:var(--sp-8); background:transparent; border:1px solid var(--mute); color:var(--text-2);
+  border-radius:999px; padding:var(--sp-8) var(--sp-16); font:400 12px/1 var(--font-mono); letter-spacing:.03em; cursor:pointer;
+  transition:border-color .16s ease-out, background-color .16s ease-out, color .16s ease-out;
+}
+.cv-board-tabs button::before{content:""; width:9px; height:9px; border-radius:50%; background:var(--lc, var(--ink)); display:inline-block;}
+/* the module sets --lc inline from its dark-theme constants; these win so the dots read in both themes */
+.cv-board-tabs button[data-l="all"]{--lc:var(--ink) !important;}
+.cv-board-tabs button[data-l="chem"]{--lc:var(--lens-chem) !important;}
+.cv-board-tabs button[data-l="ops"]{--lc:var(--lens-ops) !important;}
+.cv-board-tabs button[data-l="cust"]{--lc:var(--lens-cust) !important;}
+.cv-board-tabs button:hover{border-color:var(--gold);}
+.cv-board-tabs button[aria-pressed=true]{background:var(--ink); border-color:var(--ink); color:var(--bg);}
+.cv-board-tabs button[aria-pressed=true]::before{box-shadow:0 0 0 2px var(--bg);}
+.cv-board-frame{
+  position:relative; background:linear-gradient(180deg,#1b1b1b,#111); border:1px solid var(--board-edge); border-radius:var(--r-obj);
+  padding:var(--pad,22px); min-height:120px;
+  outline:1.5px solid var(--gold); outline-offset:4px;      /* no tilt here: a rotated canvas softens the flap text; the Home strip (real text) is the tilted one */
+  box-shadow:0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.6);
+}
+.cv-board-frame canvas{display:block;}
+.cv-board-cap{margin-top:var(--sp-24);}
+.cv-board-note{margin:var(--sp-4) 0 0; font:400 11px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute);}

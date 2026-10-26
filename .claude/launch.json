@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/serve.mjs"],
+      "port": 5317,
+      "autoPort": true
+    },
+    {
+      "name": "save",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/serve.mjs", "--save"],
+      "port": 5318,
+      "autoPort": true
+    }
+  ]
+}

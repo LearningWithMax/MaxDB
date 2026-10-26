@@ -1,0 +1,2 @@
+# Vendored files are stored and checked out byte-exact, so the hashes in vendor/MANIFEST.json always match.
+vendor/** -text

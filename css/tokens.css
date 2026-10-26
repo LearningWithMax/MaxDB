@@ -1,0 +1,56 @@
+/* Design tokens: the only place colors, fonts, spacing, radii and widths are defined.
+   Dark is the default (warm night paper). Paper, the light theme, is :root[data-theme="light"].
+   Values come from docs/superpowers/specs/2026-10-21-art-direction-brief.md, section 3. */
+:root{
+  color-scheme:dark;          /* scrollbars and native controls follow the theme */
+  /* color, dark */
+  --bg:#15130f; --panel:#1c1a15; --ink:#f2ece1; --text-2:#cfc6b4; --mute:#968d7c; --rule:#322e26;
+  --gold:#d9ae4c; --gold-text:#d9ae4c; --gunmetal:#9aa3b0; --teal:#3fcf8d; --orange:#ff7a4d;
+  --bg-glass:rgba(21,19,15,.9);
+  --footer-bg:#0e0c09; --footer-sheen:rgba(255,255,255,.05); --footer-ridge:rgba(255,255,255,.05); --footer-edge:rgba(255,255,255,.09);   /* the footer plate */
+  --footer-ink:var(--mute);                                                                                                      /* footer text: 4.5 or more on its worst pixel */
+
+  /* the objects (board, strip, opening, gate) stay dark in both themes */
+  --board:#101012; --space:#07070b;
+  --board-ink:#e8e4da; --board-mute:#968d7c; --board-gold:#d9ae4c; --board-edge:#2e2e2e;   /* the text and edge colors inside those objects, fixed in both themes */
+
+  /* the flight globe (css/globe.css reads these) is a dark object in both themes, so none of these change with the theme */
+  --globe-bg:var(--board); --globe-ink:var(--board-ink); --globe-ink-2:var(--board-ink); --globe-label-ink:var(--board-ink);
+  --globe-mute:var(--board-mute); --globe-dim:var(--board-mute); --globe-line:var(--board-edge); --globe-btn-line:var(--board-edge);
+  --globe-btn:var(--board); --globe-panel:rgba(16,16,18,.78); --globe-hover:rgba(232,228,218,.06);
+  --globe-accent:#ff7a4d; --globe-accent-2:#3fcf8d; --globe-accent-soft:rgba(255,122,77,.14);
+  --globe-scrim-strong:rgba(16,16,18,.92); --globe-scrim-mid:rgba(16,16,18,.6);
+  --globe-mono:var(--font-mono);
+
+  /* a lens color is only used where a lens is named */
+  --lens-chem:var(--teal); --lens-ops:var(--gunmetal); --lens-cust:var(--orange);
+
+  /* type: each stack ends in a generic family, so text stays visible while a font loads */
+  --font-serif:"Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans:Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-cond:"Roboto Condensed", "Arial Narrow", sans-serif;
+
+  /* spacing scale, corners, content width */
+  --sp-4:4px; --sp-8:8px; --sp-12:12px; --sp-16:16px; --sp-24:24px; --sp-32:32px; --sp-48:48px; --sp-72:72px;
+  --r-obj:12px; --r-card:6px;
+  --wrap:1140px; --pad-x:48px;
+
+  /* the flat map's country tiers, until the Trip plan replaces the map */
+  --t-born:var(--orange); --t-home:var(--teal); --t-study:var(--mute); --t-visit:#77705f; --t-base:var(--panel);
+}
+
+/* paper: the same system in daylight */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f2ece1; --panel:#f8f3e9; --ink:#16130e; --text-2:#3d3829; --mute:#6a6355; --rule:#cdc3ae;
+  --gold:#a47a16; --gold-text:#8a640f; --gunmetal:#4b5059; --teal:#0d7040; --orange:#b8431f;
+  --bg-glass:rgba(242,236,225,.9);
+  --footer-bg:#e6dec9; --footer-sheen:rgba(255,255,255,.4); --footer-ridge:rgba(22,19,14,.05); --footer-edge:rgba(255,255,255,.75);
+  --footer-ink:#5c5547;                  /* a little darker than mute, because the plate is darker than the page and mute fell to 4.03 on a ridge row */
+  --t-visit:#8d877a;          /* visited countries: 3:1 or more against the map base, in both themes */
+}
+
+@media (max-width:700px){
+  :root{ --pad-x:18px; }
+}

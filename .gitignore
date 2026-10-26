@@ -1,0 +1,13 @@
+# Full-size originals (10 to 15 MB each). Only the resized copies in img/ are committed.
+originals/
+
+node_modules/
+.env
+*.log
+.DS_Store
+Thumbs.db
+*.local.md
+*.local.txt
+
+# raw captures a scene is built from (scripts/clips/): working files, not site files
+scripts/clips/captures/

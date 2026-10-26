@@ -1,0 +1,66 @@
+/* The Welcome gate and the opening curtain. Everything here only applies while <html> has the class "intro"
+   (set before first paint by the inline script in <head>); otherwise these elements do not exist for the visitor.
+   The opening is always dark: it is a curtain over the real page, not a page. */
+
+#curtain, #introCanvas, #gate{display:none;}
+html.intro, html.intro body{background-color:var(--space); overflow:hidden;}
+/* at the release the real page background takes over behind the fading curtain, so the staged banner and hero are readable */
+html.intro.intro-release,
+html.intro.intro-release body{background-color:var(--bg);}
+
+/* While the gate is up the real page is rendered (search engines and scripts see it) but not shown. */
+html.intro:not(.intro-release) body > :not(#curtain):not(#introCanvas):not(#gate):not(script){visibility:hidden;}
+
+html.intro #curtain{display:block; position:fixed; inset:0; z-index:1000; background:var(--space); transition:opacity .9s ease;}
+html.intro.intro-release #curtain{opacity:0;}
+html.intro #introCanvas{display:block; position:fixed; inset:0; width:100%; height:100%; z-index:1001; pointer-events:none;}
+
+html.intro #gate{
+  display:flex; position:fixed; inset:0; z-index:1002; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+}
+#gate button{font-family:var(--font-cond); font-weight:700; cursor:pointer; color:#f6efe4;}
+#gateEnter{
+  font-size:13px; letter-spacing:.18em; text-transform:uppercase; padding:15px 40px; border-radius:999px;
+  transition:background .25s, border-color .25s;
+}
+#gateSkip{background:none; border:0; font-size:12px; letter-spacing:.08em; color:rgba(246,239,228,.5); padding:8px 14px;}
+#gateSkip:hover{color:rgba(246,239,228,.85);}
+#gate button:focus-visible{outline:2px solid #f6efe4; outline-offset:3px;}
+
+/* plain: the cloud is sharp and dim, one quiet outlined button */
+#gate[data-look="plain"] #gateEnter{background:rgba(255,255,255,.04); border:1px solid rgba(246,239,228,.35);}
+#gate[data-look="plain"] #gateEnter:hover{background:rgba(255,255,255,.10); border-color:rgba(246,239,228,.7);}
+
+/* frost: a pane of glass you cannot see through, with the gold coming through as soft light. It melts from the center. */
+#gate[data-look="frost"]{
+  --r:-20; --blur:17px;
+  background:rgba(255,244,226,.025);
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(1.7) brightness(1.9) contrast(1.1);
+  backdrop-filter:blur(var(--blur)) saturate(1.7) brightness(1.9) contrast(1.1);
+  box-shadow:inset 0 0 160px rgba(255,255,255,.06);
+  -webkit-mask-image:radial-gradient(circle at 50% 50%, transparent calc(var(--r)*1%), #000 calc(var(--r)*1% + 22%));
+  mask-image:radial-gradient(circle at 50% 50%, transparent calc(var(--r)*1%), #000 calc(var(--r)*1% + 22%));
+}
+#gate[data-look="frost"]::before{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.16; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+#gate[data-look="frost"] #gateEnter{
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.32);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+}
+#gate[data-look="frost"] #gateEnter:hover{background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.55);}
+
+/* the button breathes a little, so a greeting reads as something to press */
+@keyframes gateBreathe{0%,100%{box-shadow:0 0 0 0 rgba(255,236,200,0);} 50%{box-shadow:0 0 28px 2px rgba(255,236,200,.22);}}
+@media (prefers-reduced-motion:no-preference){ html.intro #gateEnter{animation:gateBreathe 3.4s ease-in-out infinite;} }
+
+/* ---- The reveal after the release ------------------------------------------------------------------------------
+   Release: the spheres float up and out (the canvas), the curtain lifts onto the real page and the banner slides down from the
+   top over 1.2 s. Settle, 0.7 s later: everything else fades in where it stands, 80 ms apart, 0.8 s each (js/home-intro.js sets --i
+   on each [data-reveal] in order). Nothing else moves. The numbers here match REVEAL in js/home-intro.js. */
+html.intro nav{transform:translateY(-100%);}
+html.intro.intro-release nav{transform:none; transition:transform 1200ms cubic-bezier(.22,.8,.3,1);}
+html.intro [data-reveal]{opacity:0;}
+@keyframes introFade{from{opacity:0;} to{opacity:1;}}
+html.intro.intro-settle [data-reveal]{animation:introFade .8s ease calc(var(--i, 0) * 80ms) both;}

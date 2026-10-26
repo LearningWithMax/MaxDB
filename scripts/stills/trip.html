@@ -1,0 +1,61 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Trip card stills</title>
+<!-- Dev tool, not part of the site. Renders the Home card image from the real flight globe (renderStill: the route drawn to a stop, no UI).
+       node scripts/serve.mjs --save     then open
+       /scripts/stills/trip.html                  a contact sheet of stops 5 to 10 (zero-based) at half size, to pick by eye
+       /scripts/stills/trip.html?stop=8&save      renders that stop at 1120 by 700 and saves img/trip-preview.webp (90,000 bytes or less)
+     Keep the tab in front while it works: a hidden tab runs no frames. -->
+<script type="importmap">
+{ "imports": { "three": "../../vendor/three/three.module.min.js", "three/addons/": "../../vendor/three/addons/", "gsap": "../../vendor/gsap/index.js" } }
+</script>
+<link rel="stylesheet" href="../../css/tokens.css">
+<link rel="stylesheet" href="../../css/globe.css">
+<style>body{background:#2a2a2a;color:#ddd;font:13px system-ui,sans-serif;margin:0;padding:12px} #out{white-space:pre;margin:0 0 10px} #sheet{display:flex;flex-wrap:wrap;gap:12px} figure{margin:0} figcaption{margin-top:4px} canvas{display:block;width:560px;height:350px;background:#000} #host{position:absolute;left:-9999px;top:0;width:1120px;height:700px}</style>
+<div id="out">working...</div>
+<div id="sheet"></div>
+<div id="host"></div>
+<script type="module">
+import { mountGlobe } from '../../modules/globe.js';
+import { TRIP_STOPS } from '../../modules/trip-stops.js';
+
+const LIMIT = 90000;
+const q = new URLSearchParams(location.search);
+const out = document.getElementById('out');
+const log = (m) => { out.textContent += '\n' + m; console.log(m); };
+const toBlob = (cv, type, quality) => new Promise((r) => cv.toBlob(r, type, quality));
+
+async function main() {
+  const globe = await mountGlobe(document.getElementById('host'), {
+    stops: TRIP_STOPS, tailLogoUrl: '../../img/logo/chrome-banner.webp', countriesUrl: '../../vendor/data/countries-110m.json',
+    autoplay: false, reducedMotion: true,
+  });
+  if (q.has('stop')) {
+    const i = Number(q.get('stop'));
+    if (!Number.isInteger(i) || i < 0 || i >= TRIP_STOPS.length) throw new Error('stop must be 0 to ' + (TRIP_STOPS.length - 1));
+    const canvas = globe.renderStill({ stop: i, width: 1120, height: 700 });
+    const sheet = document.getElementById('sheet'); sheet.appendChild(canvas);
+    let blob = null;
+    for (let quality = 0.9; quality >= 0.5; quality -= 0.05) { blob = await toBlob(canvas, 'image/webp', quality); if (blob.size <= LIMIT) break; }
+    if (blob.size > LIMIT) throw new Error(`cannot get the image under ${LIMIT} bytes (${blob.size})`);
+    log(`stop ${i} (${TRIP_STOPS[i].city}, ${TRIP_STOPS[i].when}): ${blob.size} bytes`);
+    if (q.has('save')) {
+      const r = await fetch('/__save?path=img/trip-preview.webp', { method: 'POST', body: blob });
+      if (r.status !== 204) throw new Error(`save failed (${r.status}): is the server running with --save?`);
+      log('saved img/trip-preview.webp');
+    }
+    window.__tripStill = { done: true, stop: i, bytes: blob.size, saved: q.has('save') };
+  } else {
+    for (let i = 5; i < TRIP_STOPS.length; i++) {
+      const fig = document.createElement('figure');
+      fig.appendChild(globe.renderStill({ stop: i, width: 560, height: 350 }));
+      const cap = document.createElement('figcaption'); cap.textContent = `stop ${i} (zero-based): ${TRIP_STOPS[i].city}, ${TRIP_STOPS[i].when}`;
+      fig.appendChild(cap); document.getElementById('sheet').appendChild(fig);
+    }
+    log('contact sheet: pick one, then add ?stop=<n>&save');
+    window.__tripStill = { done: true };
+  }
+  globe.dispose();
+}
+main().catch((e) => { log('ERROR ' + e.message); window.__tripStill = { done: true, error: e.message }; });
+</script>

@@ -1,0 +1,22 @@
+/* Self-hosted latin woff2 (vendor/fonts, SIL Open Font License). Every face swaps, so text shows at once in the fallback stack.
+   Only Roboto Condensed 700 is preloaded (the gate button uses it). Inter is a text subset: ASCII, Latin-1 and a few symbols. */
+@font-face{
+  font-family:"Instrument Serif"; font-style:normal; font-weight:400; font-display:swap;
+  src:url("../vendor/fonts/InstrumentSerif-400.woff2") format("woff2");
+}
+@font-face{
+  font-family:"Instrument Serif"; font-style:italic; font-weight:400; font-display:swap;
+  src:url("../vendor/fonts/InstrumentSerif-400-italic.woff2") format("woff2");
+}
+@font-face{
+  font-family:"JetBrains Mono"; font-style:normal; font-weight:400; font-display:swap;
+  src:url("../vendor/fonts/JetBrainsMono-400.woff2") format("woff2");
+}
+@font-face{
+  font-family:"Inter"; font-style:normal; font-weight:400 600; font-display:swap;
+  src:url("../vendor/fonts/Inter-400-600.woff2") format("woff2");
+}
+@font-face{
+  font-family:"Roboto Condensed"; font-style:normal; font-weight:700; font-display:swap;
+  src:url("../vendor/fonts/RobotoCondensed-700.woff2") format("woff2");
+}

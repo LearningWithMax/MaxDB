@@ -1,0 +1,136 @@
+/* ---------- Country album popup ---------- */
+.country-album-overlay{
+  position:fixed; inset:0; background:rgba(10,9,7,.6); z-index:300;
+  display:none; align-items:center; justify-content:center; padding:var(--sp-24);
+}
+.country-album-overlay.open{display:flex;}
+.country-album-popup{
+  position:relative; width:100%; max-width:980px; max-height:90vh; overflow-y:auto;
+  background:var(--panel); border:1px solid var(--rule); border-radius:var(--r-obj); box-shadow:0 40px 90px rgba(0,0,0,.45);
+}
+.album-flag-strip{height:10px; width:100%; position:sticky; top:0; z-index:2;}
+.album-inner{padding:var(--sp-32) var(--sp-48) var(--sp-32);}
+.album-close{
+  position:absolute; top:var(--sp-16); right:var(--sp-24); width:34px; height:34px; border-radius:50%;
+  background:var(--bg); border:1px solid var(--rule); color:var(--ink); font-size:18px; cursor:pointer; z-index:3;
+  display:flex; align-items:center; justify-content:center; transition:border-color .16s ease-out;
+}
+.album-close:hover{border-color:var(--gold);}
+.album-kicker{display:inline-flex; align-items:center; gap:6px; font:400 12px/1.4 var(--font-mono); letter-spacing:.03em; color:var(--gold-text); margin-bottom:var(--sp-8);}
+.album-country-name{font:400 clamp(40px, 6vw, 64px)/1 var(--font-serif); letter-spacing:-.02em; color:var(--ink); margin:0 0 var(--sp-16);}
+.album-intro-text{font:400 clamp(14px, 1.5vw, 16px)/1.6 var(--font-sans); color:var(--text-2); max-width:62ch; margin:0 0 var(--sp-24);}
+.album-coming-soon{text-align:center; padding:var(--sp-48) var(--sp-24); border:1px dashed var(--mute); border-radius:var(--r-obj);}
+.album-coming-soon .icon{font-size:30px; margin-bottom:var(--sp-8);}
+.album-coming-soon p{font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); margin:0;}
+
+.album-photo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px 18px;}
+.album-photo-card{
+  position:relative; border-radius:6px; overflow:hidden; cursor:pointer;
+  box-shadow:0 14px 28px rgba(0,0,0,0.18); background:#fff; padding:8px 8px 24px;
+  transition:transform .15s ease;
+}
+.album-photo-card:hover{transform:translateY(-3px);}
+.album-photo-placeholder{
+  width:100%; aspect-ratio:4/3; border-radius:3px;
+  background:repeating-linear-gradient(45deg, #e7e2d6, #e7e2d6 9px, #ded7c6 9px, #ded7c6 18px);
+  display:flex; align-items:center; justify-content:center; text-align:center; padding:10px;
+  color:#a08a68; font-size:11.5px; font-weight:700; position:relative;
+}
+.album-photo-wm{
+  position:absolute; bottom:8px; right:8px; width:26px; height:auto; color:#8a7454; opacity:0.5;
+}
+.album-photo-wm.wm-strong{
+  opacity:0.85; color:#5c4a2f; filter:drop-shadow(0 1px 1px rgba(0,0,0,0.35));
+}
+.album-photo-img{
+  width:100%; aspect-ratio:4/3; border-radius:3px; object-fit:cover; display:block;
+}
+.album-photo-caption{
+  position:absolute; bottom:6px; left:8px; right:8px; font-size:11px; color:#8a7454; font-weight:700; text-align:center;
+}
+
+.photo-lightbox-overlay{
+  position:fixed; inset:0; background:rgba(10,9,8,0.85); z-index:400;
+  display:none; align-items:center; justify-content:center; padding:30px;
+}
+.photo-lightbox-overlay.open{display:flex;}
+.lightbox-close{
+  position:fixed; top:20px; right:24px; width:42px; height:42px; border-radius:50%;
+  background:rgba(255,255,255,0.9); border:none; font-size:20px; font-weight:800; color:#171614; cursor:pointer;
+}
+.lightbox-content{position:relative; width:100%; max-width:760px;}
+.lightbox-placeholder{
+  width:100%; aspect-ratio:4/3; border-radius:8px;
+  background:repeating-linear-gradient(45deg, #e7e2d6, #e7e2d6 12px, #ded7c6 12px, #ded7c6 24px);
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  color:#8a7454; font-size:16px; font-weight:700; position:relative;
+  box-shadow:0 30px 70px rgba(0,0,0,0.4);
+}
+.lightbox-img{
+  width:100%; border-radius:8px; display:block; box-shadow:0 30px 70px rgba(0,0,0,0.4); position:relative;
+}
+.lightbox-wm{
+  position:absolute; bottom:18px; right:18px; width:60px; height:auto; color:#8a7454; opacity:0.5;
+}
+
+@media (max-width:700px){
+  .album-photo-grid{grid-template-columns:repeat(2, 1fr);}
+  .album-inner{padding:var(--sp-24) var(--sp-16);}
+}
+
+/* ---------- Trip page (the flat map, until the Trip plan replaces it with the globe) ---------- */
+.map-header{padding:var(--sp-72) 0 var(--sp-24);}
+.map-header h1{font:400 clamp(48px, 8vw, 96px)/.95 var(--font-serif); letter-spacing:-.025em; color:var(--ink); margin:var(--sp-16) 0;}
+.map-header p:not(.kicker):not(.map-instructions){font:400 clamp(14px, 1.5vw, 18px)/1.55 var(--font-sans); color:var(--text-2); max-width:60ch; margin:0;}
+.map-header .map-instructions{font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); max-width:70ch; margin:var(--sp-16) 0 0;}
+
+.map-stage{position:relative; padding:var(--sp-24) 0 var(--sp-72);}
+.map-svg-wrap{
+  width:100%; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r-obj);
+  overflow:hidden; position:relative;
+  touch-action:none; cursor:grab; user-select:none;
+}
+.map-svg-wrap.dragging{cursor:grabbing;}
+svg#worldmap{width:100%; height:auto; display:block; transform-origin:0 0;}
+.country{fill:var(--t-base); stroke:var(--rule); stroke-width:0.6;}
+.country.interactive{cursor:pointer;}
+.tier-born{fill:var(--t-born);}
+.tier-home{fill:var(--t-home);}
+.tier-study{fill:var(--t-study);}
+.tier-visit{fill:var(--t-visit);}
+
+/* The 4 special countries each get their own fixed, distinct color, same in both themes */
+.country[data-id="VE"]{fill:#2f9e44;}
+.country[data-id="IL"]{fill:#d9a521;}
+.country[data-id="FR"]{fill:#1e3a6e;}
+.country[data-id="ES"]{fill:#c62828;}
+.country.interactive:hover, .country.interactive:focus{filter:brightness(1.3); stroke:var(--gold); stroke-width:2.5; outline:none;}
+
+.zoom-controls{position:absolute; right:var(--sp-16); bottom:var(--sp-16); z-index:20; display:flex; flex-direction:column; gap:var(--sp-8);}
+.zoom-btn{
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--rule); background:var(--bg); color:var(--ink);
+  font:400 17px/1 var(--font-mono); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:border-color .16s ease-out;
+}
+.zoom-btn:hover{border-color:var(--gold);}
+.zoom-btn.reset{font-size:13px;}
+.map-hint{
+  position:absolute; left:var(--sp-16); bottom:var(--sp-16); z-index:20;
+  background:var(--bg); border:1px solid var(--rule); padding:7px var(--sp-16); border-radius:999px;
+  font:400 11px/1 var(--font-mono); letter-spacing:.03em; color:var(--mute); pointer-events:none;
+}
+.map-stage .cap{margin-top:var(--sp-16);}
+
+.tooltip{
+  position:absolute; pointer-events:none;
+  background:var(--panel); border:1px solid var(--rule); border-radius:var(--r-card);
+  padding:10px 13px; max-width:200px; font:400 12px/1.4 var(--font-sans); color:var(--text-2); box-shadow:0 10px 26px rgba(0,0,0,.3);
+  opacity:0; transform:translateY(4px) scale(.97); transition:opacity .12s, transform .12s; z-index:10;
+}
+.tooltip.show{opacity:1; transform:translateY(0) scale(1);}
+.tooltip .t-name{font:400 20px/1.15 var(--font-serif); margin-bottom:2px; color:var(--ink);}
+.tooltip .t-tier{display:inline-block; font:400 10px/1.4 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--gold-text); margin-bottom:3px;}
+.tooltip #tt-note{color:var(--text-2); font-size:12px;}
+@media (max-width:700px){
+  .tooltip{max-width:150px; padding:8px 10px;}
+}

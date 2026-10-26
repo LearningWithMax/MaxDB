@@ -1,0 +1,84 @@
+/* Page chrome: the banner (logo, three lowercase nav words, the Tel Aviv clock, the theme toggle). The footer joins this file later. */
+
+.skip-link{
+  position:absolute; left:var(--sp-16); top:-56px; z-index:2000;
+  background:var(--panel); color:var(--ink); border:1px solid var(--gold); border-radius:var(--r-card);
+  font:400 12px/1 var(--font-mono); letter-spacing:.03em; padding:var(--sp-12) var(--sp-16);
+  transition:top .16s ease-out;
+}
+.skip-link:focus{top:var(--sp-8);}
+
+nav{
+  position:sticky; top:0; z-index:50;
+  background:var(--bg-glass);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.nav-inner{
+  max-width:var(--wrap); margin:0 auto; padding:0 var(--pad-x); min-height:64px;
+  display:grid; grid-template-columns:auto 1fr auto; grid-template-areas:"logo links right"; align-items:center; column-gap:var(--sp-32);
+}
+
+/* logo: the balloon MDB still, with the long-press ring (a 2 second hold toggles the theme) */
+.logo{grid-area:logo; cursor:pointer; user-select:none; position:relative; display:flex; align-items:center; border-radius:var(--r-card);}
+.logo-mark-wrap{position:relative; height:34px; flex-shrink:0; display:flex; align-items:center;}
+.logo-img{height:34px; width:auto; display:block; transition:opacity .3s ease;}
+.logo-ring{
+  position:absolute; top:50%; left:50%; width:40px; height:40px;
+  transform:translate(-50%,-50%) rotate(-90deg); pointer-events:none;
+}
+.logo-ring circle{fill:none; stroke:var(--gold); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:126; stroke-dashoffset:126; transition:stroke-dashoffset .05s linear;}
+
+/* nav words: mono, lowercase, the active one underlined */
+.navlinks{grid-area:links; display:flex; align-items:center;}
+.navlinks button{
+  background:none; border:0; padding:var(--sp-8) 0; cursor:pointer;
+  font:400 12px/1 var(--font-mono); letter-spacing:.03em; text-transform:lowercase; color:var(--mute);
+  transition:color .16s ease-out;
+}
+.navlinks button + button::before{
+  content:"/"; content:"/" / ""; display:inline-block; margin:0 var(--sp-12); color:var(--mute); text-decoration:none;
+}
+.navlinks button:hover{color:var(--ink);}
+.navlinks button.active{color:var(--ink); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:6px;}
+
+.nav-right{grid-area:right; display:flex; align-items:center; gap:var(--sp-16);}
+.clock{font:400 12px/1 var(--font-mono); letter-spacing:.03em; color:var(--mute); text-transform:lowercase; white-space:nowrap; font-variant-numeric:tabular-nums;}
+.clock[hidden]{display:none;}
+.theme-toggle{
+  width:28px; height:28px; padding:0; border-radius:50%; cursor:pointer; flex-shrink:0;
+  border:1.5px solid var(--ink); background:linear-gradient(90deg, transparent 50%, var(--ink) 50%);
+  transition:border-color .16s ease-out;
+}
+.theme-toggle:hover{border-color:var(--gold);}
+
+@media (max-width:700px){
+  /* row one: logo and toggle; row two: the three nav words; no clock */
+  .nav-inner{grid-template-columns:1fr auto; grid-template-areas:"logo right" "links links"; min-height:0; padding-top:var(--sp-8); padding-bottom:var(--sp-4);}
+  .clock{display:none;}
+}
+
+/* footer: its own surface (a darker plate with fine ridges and a lit top edge, a cousin of the glass banner), a hairline, mono type;
+   the visitor log, email and LinkedIn on the left, the copyright on the right */
+footer{
+  background-color:var(--footer-bg);
+  background-image:linear-gradient(180deg, var(--footer-sheen), transparent 70%), repeating-linear-gradient(180deg, var(--footer-ridge) 0 1px, transparent 1px 4px);
+  box-shadow:inset 0 1px 0 var(--footer-edge);
+  border-top:1px solid var(--rule);
+  padding:var(--sp-32) max(var(--pad-x), calc((100% - var(--wrap)) / 2 + var(--pad-x))) var(--sp-48);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--sp-16);
+  font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--footer-ink);
+}
+.footer-left{display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-24);}
+footer a{color:var(--text-2); transition:color .16s ease-out;}
+footer a:hover{color:var(--ink);}
+footer .copyright{text-align:right;}
+@media (max-width:700px){
+  footer{flex-direction:column; align-items:flex-start;}
+  footer .copyright{text-align:left;}
+}
+
+/* paper glow, continued: a soft warm halo around the dark objects and a warm edge on the cards. Static, paper only. */
+:root[data-theme="light"] .preview-object{box-shadow:0 0 70px rgba(226,180,84,.34), 0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);}
+:root[data-theme="light"] .cv-board-frame{box-shadow:0 0 70px rgba(226,180,84,.34), 0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.6);}
+:root[data-theme="light"] :is(.skill-card, .cert-item, .edu-item){box-shadow:0 0 34px rgba(226,180,84,.16), inset 0 1px 0 #ffffff;}

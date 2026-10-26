@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Vendor self-test</title>
+<!-- Dev tool: proves the vendored libraries load through the import map. Open /scripts/vendor-selftest.html -->
+<script type="importmap">
+{ "imports": { "three": "../vendor/three/three.module.min.js", "three/addons/": "../vendor/three/addons/", "gsap": "../vendor/gsap/index.js" } }
+</script>
+<pre id="out">running...</pre>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import gsap from 'gsap';
+const ok = THREE.REVISION === '184' && typeof RoomEnvironment === 'function' && typeof Line2 === 'function' && gsap.version === '3.15.0';
+const line = ok ? `vendor ok ${THREE.REVISION} ${gsap.version}` : `vendor FAILED ${THREE.REVISION} ${gsap.version}`;
+console.log(line);
+document.getElementById('out').textContent = line;
+</script>

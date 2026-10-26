@@ -1,0 +1,85 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Logo stills</title>
+<!-- Dev tool, not part of the site. Takes the chrome logo render (chrome-render.webp, a transparent webp the owner supplied),
+     crops it to the letters and saves the banner logo, the favicons and the sharing image into img/ through the dev server's
+     guarded save route.
+       node scripts/serve.mjs --save      then open /scripts/stills/?auto  (or press the button) -->
+<style>body{background:#8a8a8a;font:14px system-ui,sans-serif;padding:16px;margin:0} #out{white-space:pre;margin:12px 0} canvas{display:block}</style>
+<button id="go">Save the logo stills</button>
+<div id="out">idle</div>
+<script type="module">
+import { SPACE_BLACK } from '../../modules/opening-config.js';
+
+const SOURCE = 'chrome-render.webp';
+const BANNER_HEIGHT = 96, BANNER_LIMIT = 28000;
+const out = document.getElementById('out');
+const log = (m) => { out.textContent += '\n' + m; console.log(m); };
+const toBlob = (cv, type, q) => new Promise((r) => cv.toBlob(r, type, q));
+const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+
+async function save(rel, blob) {
+  const r = await fetch('/__save?path=' + rel, { method: 'POST', body: blob });
+  if (r.status !== 204) throw new Error(`save failed (${r.status}) for ${rel}: is the server running with --save?`);
+  log(`saved ${rel} (${blob.size} bytes)`);
+}
+async function loadSource() {
+  const im = new Image();
+  await new Promise((res, rej) => { im.onload = res; im.onerror = () => rej(new Error('cannot load ' + SOURCE)); im.src = SOURCE; });   // not decode(): it waits for a frame, and a background tab has none
+  const c = mk(im.naturalWidth, im.naturalHeight); c.getContext('2d').drawImage(im, 0, 0);
+  return c;
+}
+// Crop a canvas to the bounding box of its non-transparent pixels.
+function cropToAlpha(src) {
+  const w = src.width, h = src.height, c = mk(w, h), x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(src, 0, 0);
+  const d = x.getImageData(0, 0, w, h).data;
+  let x0 = w, y0 = h, x1 = 0, y1 = 0;
+  for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) if (d[(y * w + xx) * 4 + 3] > 12) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  const o = mk(x1 - x0 + 1, y1 - y0 + 1);
+  o.getContext('2d').drawImage(c, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
+  return o;
+}
+// Halve repeatedly before the last step: one big jump down to 96 px height aliases the foil's fine seams.
+function scaleToHeight(src, height) {
+  let cur = src;
+  while (cur.height / 2 > height) {
+    const o = mk(Math.round(cur.width / 2), Math.round(cur.height / 2)), x = o.getContext('2d');
+    x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, o.width, o.height); cur = o;
+  }
+  const o = mk(Math.round(cur.width * height / cur.height), height), x = o.getContext('2d');
+  x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, o.width, o.height);
+  return o;
+}
+function containInSquare(src, size) {
+  const o = mk(size, size), x = o.getContext('2d'), s = Math.min(size / src.width, size / src.height);
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(src, (size - src.width * s) / 2, (size - src.height * s) / 2, src.width * s, src.height * s);
+  return o;
+}
+async function webpUnder(cv, limit) {
+  for (let q = 0.92; q >= 0.5; q -= 0.06) { const b = await toBlob(cv, 'image/webp', q); if (b.size <= limit) return b; }
+  return toBlob(cv, 'image/webp', 0.5);
+}
+
+async function run() {
+  out.textContent = 'working...';
+  const logo = cropToAlpha(await loadSource());
+  log(`letters ${logo.width} x ${logo.height}`);
+  await save('img/logo/chrome-banner.webp', await webpUnder(scaleToHeight(logo, BANNER_HEIGHT), BANNER_LIMIT));
+  await save('img/logo/favicon-32.png', await toBlob(containInSquare(scaleToHeight(logo, 64), 32), 'image/png'));
+  await save('img/logo/favicon-180.png', await toBlob(containInSquare(logo, 180), 'image/png'));
+  // Sharing image: space black, the chrome logo, the name.
+  const og = mk(1200, 630), x = og.getContext('2d');
+  x.fillStyle = SPACE_BLACK; x.fillRect(0, 0, 1200, 630);
+  const lw = 760, lh = lw * logo.height / logo.width;
+  x.imageSmoothingQuality = 'high'; x.drawImage(scaleToHeight(logo, Math.round(lh)), (1200 - lw) / 2, 150, lw, lh);
+  x.fillStyle = '#f3ece2'; x.textAlign = 'center'; x.font = '700 54px Inter, system-ui, sans-serif';
+  x.fillText('Max Duffaud Bibas', 600, 150 + lh + 90);
+  await save('img/og.png', await toBlob(og, 'image/png'));
+  log('done');
+  window.__stillsDone = true;
+}
+document.getElementById('go').onclick = () => run().catch((e) => { log('ERROR ' + e.message); window.__stillsError = e.message; });
+if (location.search.includes('auto')) document.getElementById('go').click();
+</script>

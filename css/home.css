@@ -1,0 +1,133 @@
+/* Home: hero, lens list, stats. The preview cards join this file in Task 5. */
+.hero{padding:var(--sp-72) 0 var(--sp-32); position:relative;}
+.hero .wrap{position:relative; z-index:1;}
+/* paper glow: a faint warm light from behind the name, and a second one at the top right. Static, paper only (dark has no glow). */
+:root[data-theme="light"] .hero{
+  background:
+    radial-gradient(60% 70% at 36% 36%, rgba(226,180,84,.24), transparent 72%),
+    radial-gradient(40% 45% at 100% 0%, rgba(226,180,84,.12), transparent 72%);
+}
+
+/* the walnut sticker: pinned to the corner of the departures strip; it wobbles once when the page shows */
+.nutshell-sticker{position:absolute; width:96px; cursor:pointer; z-index:3; transform:rotate(9deg);}
+.preview-departures .nutshell-sticker{top:-34px; right:-10px;}
+@keyframes nutshellWobble{
+  0%, 100%{transform:rotate(9deg);}
+  20%{transform:rotate(3deg);}
+  40%{transform:rotate(14deg);}
+  60%{transform:rotate(6deg);}
+  80%{transform:rotate(11deg);}
+}
+html:not(.intro) .preview-departures .nutshell-sticker{animation:nutshellWobble 1.1s ease-in-out .6s 1;}
+
+.nutshell-overlay{
+  position:fixed; inset:0; background:rgba(10,9,7,.6); z-index:300;
+  display:none; align-items:center; justify-content:center; padding:var(--sp-24);
+}
+.nutshell-overlay.open{display:flex;}
+.nutshell-popup{
+  position:relative; width:100%; max-width:560px; background:var(--panel);
+  box-shadow:0 40px 90px rgba(0,0,0,.45);
+  padding:52px 44px 48px;
+  clip-path: polygon(
+    0% 10px, 5% 0%, 12% 9px, 21% 1px, 30% 10px, 40% 0%, 50% 9px, 60% 0%, 70% 10px, 79% 1px, 88% 9px, 95% 0%, 100% 10px,
+    100% calc(100% - 10px), 95% 100%, 88% calc(100% - 9px), 79% calc(100% - 1px), 70% calc(100% - 10px), 60% 100%, 50% calc(100% - 9px), 40% 100%, 30% calc(100% - 10px), 21% calc(100% - 1px), 12% calc(100% - 9px), 5% 100%, 0% calc(100% - 10px)
+  );
+}
+.nutshell-close{
+  position:absolute; top:26px; right:20px; width:34px; height:34px; border-radius:50%;
+  background:var(--bg); border:1px solid var(--rule); display:flex; align-items:center; justify-content:center;
+  font-size:18px; color:var(--ink); cursor:pointer; transition:border-color .16s ease-out;
+}
+.nutshell-close:hover{border-color:var(--gold);}
+.nutshell-kicker{font:400 12px/1.4 var(--font-mono); letter-spacing:.03em; color:var(--gold-text); margin-bottom:var(--sp-8);}
+.nutshell-popup h2{font:400 40px/1.05 var(--font-serif); letter-spacing:-.01em; margin:0 0 var(--sp-24); color:var(--ink);}
+.nutshell-list{display:flex; flex-direction:column; gap:15px;}
+.nutshell-item{display:flex; align-items:flex-start; gap:var(--sp-12); font:400 15px/1.5 var(--font-sans); color:var(--text-2);}
+.nutshell-item .dot{width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:8px; align-self:auto; justify-self:auto;}
+.nutshell-item:nth-child(even) .dot{background:var(--teal);}
+.nutshell-footnote{margin-top:var(--sp-32); font:400 11px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); text-align:center;}
+h1.name{
+  font-family:var(--font-serif); font-weight:400;
+  font-size:clamp(64px, 13.4vw, 178px); line-height:.84; letter-spacing:-.025em;
+  color:var(--ink); margin:var(--sp-16) 0 var(--sp-24);
+}
+h1.name em{font-style:italic; color:var(--gunmetal);}
+.role-line{
+  font:400 clamp(14px, 1.5vw, 18px)/1.55 var(--font-sans);
+  color:var(--text-2); max-width:560px; margin:0;
+}
+
+/* the three readings: a ruled list of numbered serif words, each one opens the CV on that lens */
+.lens-list{list-style:none; margin:var(--sp-48) 0 0; padding:0; border-top:1px solid var(--ink);}
+.lens-list li{border-bottom:1px solid var(--rule); transition:border-color .16s ease-out;}
+.lens-list li:hover, .lens-list li:focus-within{border-bottom-color:var(--gold);}
+.lens-btn{
+  display:grid; grid-template-columns:44px minmax(0, 320px) 1fr 9px; align-items:baseline; column-gap:var(--sp-16);
+  padding:var(--sp-12) 0; color:inherit; text-decoration:none;
+}
+.lens-btn:focus-visible{outline-offset:-2px;}
+.lens-btn .n{font:400 11px/1 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
+.lens-btn strong{font:400 26px/1.15 var(--font-serif); color:var(--ink);}
+.lens-btn .lens-sub{font:400 11px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
+.dot{width:9px; height:9px; border-radius:50%; display:inline-block; align-self:center; justify-self:end;}
+.dot-chem{background:var(--teal);}
+.dot-ops{background:var(--gunmetal);}
+.dot-cust{background:var(--orange);}
+:root[data-theme="light"] .dot-cust{background:#d9532a;}
+
+/* stats: a ruled two by two of big serif numerals */
+.stat-row{display:grid; grid-template-columns:repeat(2, 1fr); border-top:1px solid var(--ink); margin:var(--sp-48) 0 var(--sp-72);}
+.stat{padding:var(--sp-24) 0; border-bottom:1px solid var(--rule);}
+.stat:nth-child(odd){padding-right:var(--sp-24); border-right:1px solid var(--rule);}
+.stat:nth-child(even){padding-left:var(--sp-24);}
+.stat .num{font-family:var(--font-serif); font-weight:400; font-size:clamp(52px, 6vw, 64px); line-height:1; letter-spacing:-.01em; color:var(--ink);}
+.stat .label{font:400 11px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); margin-top:var(--sp-8);}
+
+/* previews: framed pictures of the real pages. The whole card is one link; the CTA pill is just a label. */
+.previews{display:grid; grid-template-columns:1.5fr 1fr; gap:var(--sp-48) var(--sp-32); margin-top:var(--sp-72); align-items:start;}
+.preview{position:relative;}
+.preview-link{position:absolute; inset:0; z-index:1; border-radius:var(--r-obj);}
+.preview-link:focus-visible{outline-offset:8px;}
+.preview-object{
+  background:var(--board); border:1px solid var(--board-edge); border-radius:var(--r-obj);
+  box-shadow:0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
+  transition:border-color .2s ease-out;
+}
+.preview:hover .preview-object{border-color:var(--gold);}
+.preview-foot{display:flex; justify-content:space-between; align-items:flex-start; gap:var(--sp-16); margin-top:var(--sp-24);}
+.preview-foot .cap{max-width:36ch;}
+.preview-foot .pill{flex-shrink:0;}
+
+/* departures: the near-black tilted strip with the sticker on its corner. Static text, not a flipping board; the real one is on the CV. */
+.preview-departures .preview-object{
+  outline:1.5px solid var(--gold); outline-offset:4px;
+  transform:rotate(-1.1deg);
+  padding:var(--sp-24);
+  font-family:var(--font-cond); font-weight:700; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--board-ink);
+}
+.dep-row{display:grid; grid-template-columns:44px 80px 92px 1fr; column-gap:var(--sp-12); align-items:baseline; padding:var(--sp-12) 0; border-bottom:1px solid rgba(255,255,255,.08);}
+.dep-company{color:var(--board-mute);}
+.dep-more{padding-top:var(--sp-16); color:var(--board-gold);}
+
+/* trip: one still frame of the globe, no star outline (one star per screen) */
+.preview-trip .preview-object{overflow:hidden; line-height:0;}
+.preview-trip img{display:block; width:100%; height:auto; aspect-ratio:1120 / 700;}
+
+@media (max-width:1000px){
+  .previews{grid-template-columns:1fr;}
+  .lens-btn{grid-template-columns:44px 1fr 9px; grid-template-areas:"n name dot" ". sub .";}
+  .lens-btn .n{grid-area:n;} .lens-btn strong{grid-area:name;} .lens-btn .lens-sub{grid-area:sub; margin-top:var(--sp-4);} .lens-btn .dot{grid-area:dot;}
+}
+@media (max-width:700px){
+  .previews{grid-template-columns:1fr; margin-top:var(--sp-72);}
+  .preview-departures .nutshell-sticker{width:72px; top:-26px; right:-4px;}
+  .preview-departures .preview-object{transform:rotate(-0.7deg); padding:var(--sp-16);}
+  .dep-row{grid-template-columns:48px 1fr; grid-template-areas:"year place" "line line"; row-gap:2px;}
+  .dep-year{grid-area:year;} .dep-place{grid-area:place;} .dep-line{grid-area:line;}
+  .dep-company{display:none;}
+  .preview-foot{flex-direction:column; gap:var(--sp-12);}
+  h1.name{font-size:84px;}
+  .hero{padding-top:var(--sp-48);}
+  :root[data-theme="light"] .hero{background:radial-gradient(60% 70% at 36% 36%, rgba(226,180,84,.24), transparent 72%);}   /* a small phone keeps only the first wash */
+}

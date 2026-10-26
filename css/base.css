@@ -1,0 +1,57 @@
+/* Tokens live in css/tokens.css, fonts in css/fonts.css. */
+
+/* A theme switch crossfades for 250 ms. js/theme.js puts this class on <html> for a moment, so nothing pays for a transition the rest of the time. */
+html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after{
+  transition:background-color .25s ease, color .25s ease, border-color .25s ease, fill .25s ease, stroke .25s ease !important;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; scrollbar-gutter:stable;}   /* the page does not jump sideways when the opening ends and the scrollbar appears */
+body{
+  margin:0;
+  background:var(--bg) url("../img/grain.png");
+  color:var(--text-2);
+  font-family:var(--font-sans);
+  font-synthesis:none;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit; text-decoration:none;}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(14px);}
+  to{opacity:1; transform:translateY(0);}
+}
+@keyframes marquee{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+.fade-in{animation:fadeUp .7s cubic-bezier(.22,.9,.32,1) both;}
+
+section.page{display:none; min-height:calc(100vh - 60px);}
+section.page.active{display:block; animation:pageFade .2s ease-out;}
+@keyframes pageFade{from{opacity:0;} to{opacity:1;}}
+
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 var(--pad-x);}
+
+/* the mono voice: labels and captions (typed in the case they should show), and outlined pills */
+.kicker, .cap{font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute); margin:0;}
+.cap{font-size:11px;}
+.pill{
+  display:inline-flex; align-items:center; gap:var(--sp-8); padding:var(--sp-8) var(--sp-16);
+  border:1px solid var(--mute); border-radius:999px; background:transparent; color:var(--text-2);
+  font:400 12px/1 var(--font-mono); letter-spacing:.03em; cursor:pointer;
+  transition:border-color .16s ease-out, color .16s ease-out, background-color .16s ease-out;
+}
+.pill:hover{border-color:var(--gold);}
+.pill[aria-pressed="true"], .pill.is-on{background:var(--ink); border-color:var(--ink); color:var(--bg);}
+.pill-cta{border-color:var(--gold); color:var(--gold-text);}
+
+/* Reduced motion: every transition and animation becomes instant (their end state shows at once) and smooth scrolling is off.
+   The opening and the Welcome gate do not run at all for these visitors (see the inline script in index.html). */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+}
