@@ -253,3 +253,66 @@ test('css/projects.css: the notice is big and plain: a gold frame, the panel col
   assert.match(rule(css, '.projects-notice .kicker'), /color:\s*var\(--gold-text\)/);
   assert.match(css, /#page-projects\[data-view="case"\] \.projects-notice\s*\{[^}]*display:\s*none/);
 });
+
+// ---- How I work (owner, 2026-10-28): the templates are a base, custom work is possible, and two promises he can keep ----
+const how = (page.match(/<section class="how-i-work"[\s\S]*?<\/section>/) || [''])[0];
+const bodyText = 'Hi Max,\n\nI saw your site and would like to talk about a project. Here is what I need:\n\n';
+
+test('the Projects page has one "How I work" block, under the slider and the plain list, before the website case view', () => {
+  const slider = page.indexOf('id="projectSlider"'), noscript = page.indexOf('</noscript>'), at = page.indexOf('<section class="how-i-work"'), kase = page.indexOf('<section class="project-case"');
+  assert.ok(slider > 0 && noscript > slider && at > noscript && kase > at, 'slider, plain list, the block, then the case view');
+  assert.equal([...page.matchAll(/class="how-i-work"/g)].length, 1);
+  assert.match(how, /^<section class="how-i-work" aria-labelledby="how-title">\s*<p class="kicker">How I work<\/p>\s*<h2 id="how-title">Want one like it\?<\/h2>/);
+});
+
+test('the block says the templates are a base, that something 100% custom can be built, and tells four plain steps', () => {
+  assert.match(how, /<p class="how-lead">The templates above are a base that I personalize for you\. They are also here to show what I know how to build, so if you want something 100% custom, I can build that too\.<\/p>/);
+  const steps = [...how.matchAll(/<li>\s*<p><strong>([^<]+)<\/strong>([^<]*)<\/p>\s*<\/li>/g)].map((m) => [m[1], m[2].trim()]);
+  assert.deepEqual(steps, [
+    ['Tell me what you need.', 'A short email is enough.'],
+    ['We talk it through.', 'A call, so I understand your business and what the site has to do.'],
+    ['I build it.', 'I adapt a template or build something new. The look, the paths visitors choose and the details of each item are made to fit you.'],
+    ['You try it, we adjust, it goes live.', ''],
+  ]);
+  assert.match(how, /<ol class="how-steps" role="list">/);
+});
+
+test('the two promises are the ones he can keep: a free first talk with no obligation, and a reply within two business days', () => {
+  assert.match(how, /<p class="how-promise">The first conversation is free, with no obligation\. I reply within two business days\.<\/p>/);
+  const seen = how.replace(/<[^>]*>/g, ' ');
+  assert.doesNotMatch(seen, /\$|€|price|cost|weeks?\b|days? to|guarantee/i, 'no price, delivery time or guarantee that he did not give');
+  assert.doesNotMatch(seen, /\bAI\b/, 'no claim about AI here');
+});
+
+test('the one button opens an email to the CV address with a subject and a starting message', () => {
+  const m = how.match(/<p class="how-action"><a class="pill pill-cta" href="([^"]+)">Tell me what you need<\/a><\/p>/);
+  assert.ok(m, 'the button markup');
+  const url = new URL(m[1].replace(/&amp;/g, '&'));
+  assert.equal(url.protocol, 'mailto:');
+  assert.equal(decodeURIComponent(url.pathname), 'duffaud.max@gmail.com');
+  assert.equal(url.searchParams.get('subject'), 'Project inquiry');
+  assert.equal(url.searchParams.get('body'), bodyText);
+  assert.doesNotMatch(m[1], /\s/, 'the address has no raw spaces');
+});
+
+test('the block follows the copy rules: no dashes, American spelling, straight quotes', () => {
+  assert.deepEqual(findBannedText('index.html (how I work)', how), []);
+});
+
+test('css/projects.css: the block is a quiet section under a rule, numbered steps in mono gold, a gold-ruled promise, all from tokens, and gone in the case view', () => {
+  const block = rule(css, '.how-i-work');
+  assert.match(block, /border-top:\s*1px solid var\(--rule\)/);
+  assert.match(block, /max-width:\s*860px/);
+  assert.match(rule(css, '.how-i-work h2'), /font:[^;]*var\(--font-serif\)/);
+  assert.match(rule(css, '.how-lead'), /color:\s*var\(--text-2\)/);
+  assert.match(rule(css, '.how-steps'), /counter-reset:\s*how/);
+  assert.match(rule(css, '.how-steps li'), /counter-increment:\s*how/);
+  assert.match(rule(css, '.how-steps li::before'), /content:\s*"0" counter\(how\)/);
+  assert.match(rule(css, '.how-steps li::before'), /font:[^;]*var\(--font-mono\)/);
+  assert.match(rule(css, '.how-steps li::before'), /color:\s*var\(--gold-text\)/);
+  assert.match(rule(css, '.how-steps strong'), /font:[^;]*var\(--font-serif\)/);
+  assert.match(rule(css, '.how-promise'), /border-left:\s*2px solid var\(--gold\)/);
+  const mine = ['.how-i-work', '.how-i-work h2', '.how-lead', '.how-steps', '.how-steps li', '.how-steps li::before', '.how-steps strong', '.how-promise'].map((s) => rule(css, s)).join(' ');
+  assert.doesNotMatch(mine, /#[0-9a-f]{3,8}\b/i, 'no colors written here');
+  assert.match(css, /#page-projects\[data-view="case"\] \.how-i-work\s*\{[^}]*display:\s*none/);
+});
