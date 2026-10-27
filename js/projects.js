@@ -43,10 +43,10 @@ const PROJECTS = [
   },
   {
     id: 'broker-markets', title: 'Broker template for any market', status: 'planned', order: 4,
-    oneLine: 'The car broker template reshaped for other markets.',
+    oneLine: "One template for any broker business, built from the car broker. The skeleton stays the same: a catalog, requests with a status, private notes, reply templates and a calendar. For each market, the paths visitors choose, the details of each item and the look change.",
     builtWith: 'The same stack as the car broker: Next.js, TypeScript, Tailwind CSS and Supabase.',
     stands: 'Planned. It starts once the car version is complete.',
-    figure: { kind: 'words', items: ['cars', 'homes', 'places', 'boats', 'motorcycles'] },
+    figure: { kind: 'words', items: ['homes', 'boats', 'equipment', 'collectibles', 'villas'] },
   },
   {
     id: 'quote-market', title: 'Quote marketplace', status: 'building', order: 5, access: 'request', soon: true,

@@ -34,7 +34,7 @@ test('the one lines are the approved text', () => {
     'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.',
     'A showcase of me: my professional experience in the CV, my creative side in the look, and my tech side in the site itself and its animations, including a 3D flight over the places where I was born, studied and worked. I bring the vision and lead, and Claude brainstorms and builds it with me.',
     "A voice-first to-do and memory system. I talk to Claude on my phone, even in a long ramble, and it files what I said into Notion as tasks, reminders, appointments, notes and ideas. It checks for repeats, plans my day, wraps it up with me and keeps a searchable daily log.",
-    'The car broker template reshaped for other markets.',
+    "One template for any broker business, built from the car broker. The skeleton stays the same: a catalog, requests with a status, private notes, reply templates and a calendar. For each market, the paths visitors choose, the details of each item and the look change.",
     "A B2B portal where companies sign up and are vetted by the seller's staff. Once approved, they browse the catalog and send an inquiry for products or services, and the seller replies with a quote. If it suits them, they accept and pay, then send the details for delivery, all inside the portal.",
   ]);
 });
@@ -454,6 +454,18 @@ test('the quote marketplace text: what it does, the dashboard, built with and wh
   assert.equal(q.stands, "A working private demo on invented data. Coming soon.");
   assert.ok(q.oneLine.length <= 300 && q.dashboard.length <= 300 && q.builtWith.length <= 120 && q.stands.length <= 140);
   assert.doesNotMatch([q.oneLine, q.dashboard, q.builtWith, q.stands].join(' '), /Chacao|Laboratorios|Aguair|desinlab|Venezuela|Yaracuy|INSAI|bol[ií]var/i, 'no client name or detail on a public page');
+});
+
+// ---- Broker template for any market (owner, 2026-10-27): one template per market, a shared skeleton, a few things change ----
+test('the broker template text: one template for any broker business, and the five markets he picked', () => {
+  const b = plain(PROJECTS).find((p) => p.id === 'broker-markets');
+  assert.equal(b.oneLine, "One template for any broker business, built from the car broker. The skeleton stays the same: a catalog, requests with a status, private notes, reply templates and a calendar. For each market, the paths visitors choose, the details of each item and the look change.");
+  assert.ok(b.oneLine.length <= 300);
+  assert.equal(b.builtWith, 'The same stack as the car broker: Next.js, TypeScript, Tailwind CSS and Supabase.');
+  assert.equal(b.stands, 'Planned. It starts once the car version is complete.');
+  assert.deepEqual(b.figure, { kind: 'words', items: ["homes","boats","equipment","collectibles","villas"] });
+  assert.equal(b.status, 'planned');
+  assert.equal(b.access, undefined, 'a planned project has nothing to ask for yet');
 });
 
 // ---- Voice organizer (owner, 2026-10-27): drafted from his Organizer folder, approved yes ----
