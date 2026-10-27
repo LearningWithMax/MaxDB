@@ -35,9 +35,10 @@ const PROJECTS = [
   },
   {
     id: 'organizer', title: 'Voice organizer', status: 'building', order: 3,
-    oneLine: 'I talk to Claude on my phone and it files tasks and notes into Notion.',
+    oneLine: "A voice-first to-do and memory system. I talk to Claude on my phone, even in a long ramble, and it files what I said into Notion as tasks, reminders, appointments, notes and ideas. It checks for repeats, plans my day, wraps it up with me and keeps a searchable daily log.",
+    dashboard: "A Notion dashboard with the list for today, what slipped from earlier, an inbox, a calendar, build ideas, ideas and notes, and a daily log that keeps everything I said.",
     builtWith: 'The Claude app on my phone and Notion, with a written set of instructions. Nothing to host.',
-    stands: 'Built and in testing on my own phone. It is not public.',
+    stands: "Built and in testing on my own phone. More features are planned, and it is not public.",
     figure: { kind: 'flow', items: ['talk', 'file', 'plan my day'] },
   },
   {

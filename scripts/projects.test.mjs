@@ -33,7 +33,7 @@ test('the one lines are the approved text', () => {
   assert.deepEqual(plain(PROJECTS).map((p) => p.oneLine), [
     'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.',
     'A showcase of me: my professional experience in the CV, my creative side in the look, and my tech side in the site itself and its animations, including a 3D flight over the places where I was born, studied and worked. I bring the vision and lead, and Claude brainstorms and builds it with me.',
-    'I talk to Claude on my phone and it files tasks and notes into Notion.',
+    "A voice-first to-do and memory system. I talk to Claude on my phone, even in a long ramble, and it files what I said into Notion as tasks, reminders, appointments, notes and ideas. It checks for repeats, plans my day, wraps it up with me and keeps a searchable daily log.",
     'The car broker template reshaped for other markets.',
     "A B2B portal where companies sign up and are vetted by the seller's staff. Once approved, they browse the catalog and send an inquiry for products or services, and the seller replies with a quote. If it suits them, they accept and pay, then send the details for delivery, all inside the portal.",
   ]);
@@ -388,7 +388,7 @@ test('the car broker text: what it does, the dashboard, built with and where it 
   assert.equal(car.stands, "Live as a demo on invented data. It is an earlier version, and a newer one is built but not live yet.");
   assert.ok(car.oneLine.length <= 300 && car.dashboard.length <= 300);
   assert.doesNotMatch(car.oneLine, /answers? from a private dashboard/, 'the broker answers by phone, text or email, not from the dashboard');
-  assert.deepEqual(plain(PROJECTS).filter((p) => p.dashboard !== undefined).map((p) => p.id), ['car-broker', 'quote-market'], 'only the car broker and the quote marketplace have a dashboard row');
+  assert.deepEqual(plain(PROJECTS).filter((p) => p.dashboard !== undefined).map((p) => p.id), ['car-broker', 'organizer', 'quote-market'], 'only the car broker, the organizer and the quote marketplace have a dashboard row');
   for (const p of plain(PROJECTS)) assert.ok(p.oneLine.length <= 300, p.id + ' one line is at most 300 characters');
 });
 
@@ -414,7 +414,7 @@ test('noscriptListHtml: the dashboard line is in the plain list too, between wha
   const at = (s) => car.indexOf(s);
   assert.ok(at(escapeHtml(PROJECTS[0].oneLine)) > 0 && at(escapeHtml(PROJECTS[0].oneLine)) < at(' Inside the dashboard: ' + escapeHtml(PROJECTS[0].dashboard)));
   assert.ok(at(' Inside the dashboard: ') < at(' Built with: '));
-  assert.equal(count(html, /Inside the dashboard: /g), 2, 'the car broker and the quote marketplace');
+  assert.equal(count(html, /Inside the dashboard: /g), 3, 'the car broker, the organizer and the quote marketplace');
 });
 
 // ---- the car broker's button asks for the dashboard (owner, 2026-10-27): its site is public, only the dashboard is private ----
@@ -454,6 +454,18 @@ test('the quote marketplace text: what it does, the dashboard, built with and wh
   assert.equal(q.stands, "A working private demo on invented data. Coming soon.");
   assert.ok(q.oneLine.length <= 300 && q.dashboard.length <= 300 && q.builtWith.length <= 120 && q.stands.length <= 140);
   assert.doesNotMatch([q.oneLine, q.dashboard, q.builtWith, q.stands].join(' '), /Chacao|Laboratorios|Aguair|desinlab|Venezuela|Yaracuy|INSAI|bol[ií]var/i, 'no client name or detail on a public page');
+});
+
+// ---- Voice organizer (owner, 2026-10-27): drafted from his Organizer folder, approved yes ----
+test('the voice organizer text: what it does, the dashboard, built with and where it stands, as the owner approved them', () => {
+  const o = plain(PROJECTS).find((p) => p.id === 'organizer');
+  assert.equal(o.oneLine, "A voice-first to-do and memory system. I talk to Claude on my phone, even in a long ramble, and it files what I said into Notion as tasks, reminders, appointments, notes and ideas. It checks for repeats, plans my day, wraps it up with me and keeps a searchable daily log.");
+  assert.equal(o.dashboard, "A Notion dashboard with the list for today, what slipped from earlier, an inbox, a calendar, build ideas, ideas and notes, and a daily log that keeps everything I said.");
+  assert.equal(o.builtWith, 'The Claude app on my phone and Notion, with a written set of instructions. Nothing to host.');
+  assert.equal(o.stands, "Built and in testing on my own phone. More features are planned, and it is not public.");
+  assert.ok(o.oneLine.length <= 300 && o.dashboard.length <= 300 && o.builtWith.length <= 120 && o.stands.length <= 140);
+  assert.doesNotMatch([o.oneLine, o.dashboard, o.builtWith, o.stands].join(' '), /notion.(so|site)|https?:|[0-9a-f]{32}/i, 'no Notion link or page id on a public page');
+  assert.equal(o.access, undefined, 'nothing to open or ask for: it runs on his own phone');
 });
 
 test('a project that is not open yet says so on its access button, in the email and for screen readers', () => {

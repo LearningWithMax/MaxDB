@@ -108,7 +108,8 @@ is `next`); merging into `main` goes live in about a minute and needs the owner'
    - Quote marketplace: text done on 2026-10-27 (a B2B portal, with an "Inside the dashboard" row and the button "Ask for access · coming soon", set with `soon: true`). Its code is in
      a folder next to this repo, named for the client it started with; never copy anything private from it into this public repo. When a generic template version of it exists, update the text and
      drop `soon`. The public text says accept, pay, then send the details for delivery.
-   - Next: the organizer and the broker template for any market. Reading buttons on the CV: all, customer-facing, operations, chemistry (`LENS_ORDER` in `modules/board-data.js`); the Home rows follow the same order.
+   - Voice organizer: text done 2026-10-27, drafted from his Organizer folder (what it does, an "Inside the dashboard" row, "More features are planned"); no Notion links or page ids on the site. A real screenshot of his Notion dashboard would replace the drawn flow later.
+   - Next: the broker template for any market. Reading buttons on the CV: all, customer-facing, operations, chemistry (`LENS_ORDER` in `modules/board-data.js`); the Home rows follow the same order.
 3. The "How I work" text (he sent two example sites: a four-step process with a discovery call, and a short FAQ with real promises such as a reply time). The point is that the
    templates are a base that is personalized, and that specific or unique tools can be built for a person; both "look what I can do" and "contact me for one like it". Decide with him
    where it goes (a block on the Projects page, a line in each template panel, or Home). Only claims he can stand behind. Idea for after that: sell the basic templates on a
