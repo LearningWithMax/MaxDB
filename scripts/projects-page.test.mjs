@@ -277,8 +277,9 @@ test('the block says the templates are a base, that something 100% custom can be
   assert.match(how, /<ol class="how-steps" role="list">/);
 });
 
-test('the two promises are the ones he can keep: a free first talk with no obligation, and a reply within two business days', () => {
-  assert.match(how, /<p class="how-promise">The first conversation is free, with no obligation\. I reply within two business days\.<\/p>/);
+test('the two promises are the ones he can keep: reach out with no obligation, and a reply within two business days (nothing says it is free)', () => {
+  assert.match(how, /<p class="how-promise">Don't hesitate to reach out, no obligation\. I reply within two business days\.<\/p>/);
+  assert.doesNotMatch(how.replace(/<[^>]*>/g, ' '), /\bfree\b/i, 'he does not want to say it is free');
   const seen = how.replace(/<[^>]*>/g, ' ');
   assert.doesNotMatch(seen, /\$|€|price|cost|weeks?\b|days? to|guarantee/i, 'no price, delivery time or guarantee that he did not give');
   assert.doesNotMatch(seen, /\bAI\b/, 'no claim about AI here');
