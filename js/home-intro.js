@@ -5,13 +5,13 @@ const GLIDE_HANDOFF = false;     // false: the spheres float up and out like bal
 
 // The reveal after the release, in ms after the release event. The banner slides down for bannerMs (css/opening.css); at settleAfterMs
 // the rest of the page fades in, each item fadeMs long and staggerMs after the one before. finishAt is when the intro classes, the
-// curtain and the canvas can go: after the last fade ends, and never before the spheres have finished leaving (1.8 s) plus 400 ms. The css
-// repeats these numbers (1200ms, 1.3s, 120ms) and scripts/reveal.test.mjs keeps the two in step.
-const REVEAL = { bannerMs: 1200, settleAfterMs: 700, fadeMs: 1300, staggerMs: 120 };
+// curtain and the canvas can go: after the last fade ends, and never before the spheres have finished leaving (1.5 s) plus 400 ms. The css
+// repeats these numbers (1200ms, 1.05s, 100ms) and scripts/reveal.test.mjs keeps the two in step.
+const REVEAL = { bannerMs: 1200, settleAfterMs: 700, fadeMs: 1050, staggerMs: 100 };
 function revealTimings(itemCount){
   const n = Math.max(itemCount, 1);
   const settleAt = REVEAL.settleAfterMs;
-  return { settleAt, finishAt: Math.max(2200, settleAt + REVEAL.fadeMs + REVEAL.staggerMs * (n - 1) + 100) };
+  return { settleAt, finishAt: Math.max(1900, settleAt + REVEAL.fadeMs + REVEAL.staggerMs * (n - 1) + 100) };
 }
 
 // Frost needs the browser to blur and the gate to run smoothly. Otherwise the plain look.
