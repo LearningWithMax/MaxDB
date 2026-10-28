@@ -51,7 +51,7 @@ test('the visitor log lives in the footer, left of the copyright, with email and
 // The owner's credit line (2026-10-27): plain text after the links, no logo and no link.
 test('the footer carries a plain "Built with Claude" line in the middle, between the links and the copyright', () => {
   const foot = html.slice(html.indexOf('<footer'), html.indexOf('</footer>'));
-  assert.match(foot, /<\/div>\s*<span class="built-with">Built with Claude<\/span>\s*<div class="copyright">/);
+  assert.match(foot, /<\/div>\s*<span class="built-with">Built with Claude<span class="build-mark" aria-hidden="true"><\/span><\/span>\s*<div class="copyright">/);
   assert.equal([...foot.matchAll(/Built with Claude/g)].length, 1);
   assert.match(rule(css.chrome, '.footer-left'), /flex:\s*1 1 0/, 'the left side and the right side share the room equally, so the middle is the true middle');
   assert.match(rule(css.chrome, 'footer .copyright'), /flex:\s*1 1 0/);
