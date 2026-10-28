@@ -8,7 +8,7 @@ import gsap from 'gsap';
 import { FINISHES, STUDIO, tierParams, glideTargets, chromeShade } from './opening-config.js';
 
 const LW = 6.4, LH = 3.6;                         // logo plane in world units (16:9)
-const RELEASE_AT = 3.25;                          // seconds into the timeline: gather 0.3 to 2.3, sweep 2.0 to 3.3, release 3.25 to 4.4
+const RELEASE_AT = 3.25;                          // seconds into the timeline: gather 0.3 to 2.3, sweep 2.0 to 3.3, release 3.25 to 5.05
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -135,8 +135,8 @@ export async function createOpening({ canvas, shapeUrl, finish = 'chrome', tier 
   const tl = gsap.timeline({ paused: true });
   tl.to(S, { gather: 1, duration: 2.0, ease: 'none' }, 0.3);
   tl.to(S, { sweep: 1, duration: 1.3, ease: 'power1.inOut' }, 2.0);
-  tl.to(S, { release: 1, duration: 1.15, ease: 'power2.in' }, RELEASE_AT);
-  tl.to({}, { duration: 0.01 }, 4.45);
+  tl.to(S, { release: 1, duration: 1.8, ease: 'power2.in' }, RELEASE_AT);
+  tl.to({}, { duration: 0.01 }, 5.1);
   tl.eventCallback('onComplete', () => { if (!completeEmitted) { completeEmitted = true; emit('complete'); } });
 
   /* ---------------------------------------------------------------- frame */
@@ -171,7 +171,7 @@ export async function createOpening({ canvas, shapeUrl, finish = 'chrome', tier 
       }
       spheres.instanceMatrix.needsUpdate = true; spheres.instanceColor.needsUpdate = true;
     }
-    mat.opacity = glide ? 1 - clamp((R - 0.8) / 0.2, 0, 1) : 1 - R * R;    // with the glide the cloud stays whole, then fades into the logo
+    mat.opacity = glide ? 1 - clamp((R - 0.8) / 0.2, 0, 1) : 1 - R;    // plain float-up: thins out from the first moment, gone as it ends. With the glide the cloud stays whole, then fades into the logo
     key.position.x = lerp(-7, 7, S.sweep);                                 // the light sweep across the chrome during the hold
     mouse.x += (mouse.tx - mouse.x) * 0.05; mouse.y += (mouse.ty - mouse.y) * 0.05;
     if (!gliding) { stage.rotation.y = mouse.x * 0.14; stage.rotation.x = mouse.y * 0.07; }

@@ -7,16 +7,19 @@ const read = (p) => fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8')
 const { REVEAL, revealTimings, GLIDE_HANDOFF } = loadClassic('js/home-intro.js', ['REVEAL', 'revealTimings', 'GLIDE_HANDOFF']);
 const timings = (n) => ({ ...revealTimings(n) });          // loaded in another realm: spread so deepEqual compares plain objects
 
-test('REVEAL holds the approved numbers: banner 1200 ms, settle after 700 ms, fades 800 ms, 80 ms apart', () => {
-  assert.deepEqual({ ...REVEAL }, { bannerMs: 1200, settleAfterMs: 700, fadeMs: 800, staggerMs: 80 });
+// The release of the spheres, read from the opening itself, so the page can never be torn down while they are still on screen.
+const releaseMs = Number(read('modules/opening.js').match(/release: 1, duration: ([\d.]+)/)[1]) * 1000;
+
+test('REVEAL holds the approved numbers (slower fade, 2026-10-28): banner 1200 ms, settle after 700 ms, fades 1300 ms, 120 ms apart', () => {
+  assert.deepEqual({ ...REVEAL }, { bannerMs: 1200, settleAfterMs: 700, fadeMs: 1300, staggerMs: 120 });
 });
 
-test('revealTimings: eight items settle at 700 ms and finish at 2160 ms', () => {
-  assert.deepEqual(timings(8), { settleAt: 700, finishAt: 2160 });
+test('revealTimings: eight items settle at 700 ms and finish at 2940 ms', () => {
+  assert.deepEqual(timings(8), { settleAt: 700, finishAt: 2940 });
 });
 
-test('revealTimings: one item finishes at 1600 ms, and zero items count as one', () => {
-  assert.deepEqual(timings(1), { settleAt: 700, finishAt: 1600 });
+test('revealTimings: one item finishes at 2200 ms (the floor, 400 ms after the spheres are gone), and zero items count as one', () => {
+  assert.deepEqual(timings(1), { settleAt: 700, finishAt: 2200 });
   assert.deepEqual(timings(0), timings(1));
   assert.deepEqual(timings(-3), timings(1));
 });
@@ -25,7 +28,7 @@ test('revealTimings: the finish never comes before the last fade ends (no half-f
   for (let n = 1; n <= 30; n++) {
     const t = timings(n);
     assert.ok(t.finishAt >= t.settleAt + REVEAL.fadeMs + REVEAL.staggerMs * (n - 1), `n=${n}`);
-    assert.ok(t.finishAt >= 1500, 'and not before the opening itself has ended plus 350 ms');
+    assert.ok(t.finishAt >= releaseMs + 350, 'and not before the spheres have finished leaving plus 350 ms');
   }
 });
 
@@ -42,8 +45,8 @@ test('opening.css: the banner slides in from above, the rest fades in at the set
   assert.match(css, /html\.intro nav\s*\{[^}]*transform:\s*translateY\(-100%\)/);
   assert.match(css, new RegExp(`html\\.intro\\.intro-release nav\\s*\\{[^}]*transition:\\s*transform\\s+${REVEAL.bannerMs}ms`));
   assert.match(css, /html\.intro \[data-reveal\]\s*\{[^}]*opacity:\s*0/);
-  assert.match(css, new RegExp(`html\\.intro\\.intro-settle \\[data-reveal\\]\\s*\\{[^}]*animation:\\s*introFade\\s+\\.8s\\s+ease\\s+calc\\(var\\(--i,\\s*0\\)\\s*\\*\\s*${REVEAL.staggerMs}ms\\)\\s+both`));
-  assert.equal(REVEAL.fadeMs, 800);
+  assert.match(css, new RegExp(`html\\.intro\\.intro-settle \\[data-reveal\\]\\s*\\{[^}]*animation:\\s*introFade\\s+1\\.3s\\s+ease\\s+calc\\(var\\(--i,\\s*0\\)\\s*\\*\\s*${REVEAL.staggerMs}ms\\)\\s+both`));
+  assert.equal(REVEAL.fadeMs, 1300);
   assert.doesNotMatch(css, /--intro-dy/);
   assert.doesNotMatch(css, /:not\(nav\):not\(#page-home\)/, 'the old catch-all that hid the page until the settle is gone');
 });
@@ -53,6 +56,15 @@ test('opening.css: the gate buttons use the condensed face and the backgrounds k
   assert.match(css, /#gate button\s*\{[^}]*font-family:\s*var\(--font-cond\)/);
   assert.match(css, /html\.intro, html\.intro body\s*\{[^}]*background-color:\s*var\(--space\)/);
   assert.match(css, /html\.intro\.intro-release,\s*html\.intro\.intro-release body\s*\{[^}]*background-color:\s*var\(--bg\)/);
+});
+
+test('the opening lets go slowly (owner, 2026-10-28): release 1.8 s, spheres thin out as they rise, the curtain lifts over 1.4 s', () => {
+  const op = read('modules/opening.js');
+  assert.match(op, /tl\.to\(S, \{ release: 1, duration: 1\.8, ease: 'power2\.in' \}, RELEASE_AT\);/);
+  assert.match(op, /tl\.to\(\{\}, \{ duration: 0\.01 \}, 5\.1\);/, 'the end marker sits just after the release ends (3.25 + 1.8 = 5.05)');
+  assert.match(op, /mat\.opacity = glide \? [^:]+ : 1 - R;/, 'the plain float-up thins out from the first moment');
+  assert.doesNotMatch(op, /1 - R \* R/, 'not the old late drop, which kept the spheres solid until the last moment');
+  assert.match(read('css/opening.css'), /html\.intro #curtain\s*\{[^}]*transition:\s*opacity\s+1\.4s\s+ease/);
 });
 
 test('index.html: every Home block, the footer and the three fixed or top-level extras carry data-reveal', () => {
