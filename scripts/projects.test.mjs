@@ -379,13 +379,13 @@ test('noscriptListHtml: the note is in the plain list too, after where it stands
   assert.equal(count(html, /Note: /g), 1);
 });
 
-// ---- the car broker's final text, decided with the owner on 2026-10-27 (checked against the code on his PC; the demo is an earlier version) ----
+// ---- the car broker's text, decided with the owner on 2026-10-27 and updated on 2026-10-28 when the newer code was on the demo (only the new look is still to come) ----
 test('the car broker text: what it does, the dashboard, built with and where it stands, as the owner approved them', () => {
   const car = plain(PROJECTS[0]);
   assert.equal(car.oneLine, "A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.");
-  assert.equal(car.dashboard, "Requests with a status for each car, private notes, reply templates and a calendar. Cars with photos, prices and tags for each path. Switch paths on or off, manage locations and site images, and see top customers.");
+  assert.equal(car.dashboard, "Requests with a status for each car, search and filters, private notes, reply templates, a calendar and CSV export. Cars with photos, prices and tags for each path, and Duplicate. Switch paths on or off, manage locations and site images, and see top customers.");
   assert.equal(car.builtWith, "Next.js, React, TypeScript, Tailwind, Supabase, Resend and Vercel.");
-  assert.equal(car.stands, "Live as a demo on invented data. It is an earlier version, and a newer one is built but not live yet.");
+  assert.equal(car.stands, "Live as a demo on invented data. Small adjustments are still coming.");
   assert.ok(car.oneLine.length <= 300 && car.dashboard.length <= 300);
   assert.doesNotMatch(car.oneLine, /answers? from a private dashboard/, 'the broker answers by phone, text or email, not from the dashboard');
   assert.deepEqual(plain(PROJECTS).filter((p) => p.dashboard !== undefined).map((p) => p.id), ['car-broker', 'organizer', 'quote-market'], 'only the car broker, the organizer and the quote marketplace have a dashboard row');
