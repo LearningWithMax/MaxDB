@@ -8,7 +8,7 @@ import gsap from 'gsap';
 import { FINISHES, STUDIO, tierParams, glideTargets, chromeShade } from './opening-config.js';
 
 const LW = 6.4, LH = 3.6;                         // logo plane in world units (16:9)
-const RELEASE_AT = 3.25;                          // seconds into the timeline: gather 0.3 to 2.3, sweep 2.0 to 3.3, release 3.25 to 4.55
+const RELEASE_AT = 2.95;                          // seconds into the timeline: gather 0.3 to 2.3, sweep 2.0 to 2.95, release 2.95 to 4.25
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -134,9 +134,9 @@ export async function createOpening({ canvas, shapeUrl, finish = 'chrome', tier 
   let started = false, releaseEmitted = false, completeEmitted = false, disposed = false, baseScale = 1, gliding = false;
   const tl = gsap.timeline({ paused: true });
   tl.to(S, { gather: 1, duration: 2.0, ease: 'none' }, 0.3);
-  tl.to(S, { sweep: 1, duration: 1.3, ease: 'power1.inOut' }, 2.0);
+  tl.to(S, { sweep: 1, duration: 0.95, ease: 'power1.inOut' }, 2.0);
   tl.to(S, { release: 1, duration: 1.3, ease: 'power2.in' }, RELEASE_AT);
-  tl.to({}, { duration: 0.01 }, 4.6);
+  tl.to({}, { duration: 0.01 }, 4.3);
   tl.eventCallback('onComplete', () => { if (!completeEmitted) { completeEmitted = true; emit('complete'); } });
 
   /* ---------------------------------------------------------------- frame */
@@ -208,7 +208,7 @@ export async function createOpening({ canvas, shapeUrl, finish = 'chrome', tier 
     start() { started = true; tl.restart(); },
     skipToRelease() { if (started && tl.time() < RELEASE_AT) tl.seek(RELEASE_AT); },
     on(event, fn) { handlers[event].push(fn); },
-    holdFrame() { started = true; tl.pause(); tl.time(2.95); update(performance.now() / 1000); renderer.render(scene, camera); },
+    holdFrame() { started = true; tl.pause(); tl.time(2.7); update(performance.now() / 1000); renderer.render(scene, camera); },
     // Jump the timeline to `seconds` with events firing, then draw one frame. For tests and stills: it does not need the
     // browser to run animation frames (a hidden tab does not), so the release and complete events can be checked anywhere.
     seek(seconds) { started = true; tl.pause(); tl.seek(seconds, false); update(performance.now() / 1000); renderer.render(scene, camera); },

@@ -61,10 +61,24 @@ test('opening.css: the gate buttons use the condensed face and the backgrounds k
 test('the opening lets go at a middle pace (owner, 2026-10-28): release 1.3 s, spheres thin out as they rise, the curtain lifts over 1 s', () => {
   const op = read('modules/opening.js');
   assert.match(op, /tl\.to\(S, \{ release: 1, duration: 1\.3, ease: 'power2\.in' \}, RELEASE_AT\);/);
-  assert.match(op, /tl\.to\(\{\}, \{ duration: 0\.01 \}, 4\.6\);/, 'the end marker sits just after the release ends (3.25 + 1.3 = 4.55)');
+  assert.match(op, /tl\.to\(\{\}, \{ duration: 0\.01 \}, 4\.3\);/, 'the end marker sits just after the release ends (2.95 + 1.3 = 4.25)');
   assert.match(op, /mat\.opacity = glide \? [^:]+ : 1 - R;/, 'the plain float-up thins out from the first moment');
   assert.doesNotMatch(op, /1 - R \* R/, 'not the old late drop, which kept the spheres solid until the last moment');
   assert.match(read('css/opening.css'), /html\.intro #curtain\s*\{[^}]*transition:\s*opacity\s+1s\s+ease/);
+});
+
+test('the logo does not linger (owner, 2026-10-28): the beads lift 0.65 s after the last one lands, and the light sweep ends as they lift', () => {
+  const op = read('modules/opening.js');
+  const releaseAt = Number(op.match(/const RELEASE_AT = ([\d.]+);/)[1]);
+  const sweep = op.match(/tl\.to\(S, \{ sweep: 1, duration: ([\d.]+), ease: 'power1\.inOut' \}, ([\d.]+)\);/);
+  const gather = op.match(/tl\.to\(S, \{ gather: 1, duration: ([\d.]+), ease: 'none' \}, ([\d.]+)\);/);
+  const holdFrameAt = Number(op.match(/holdFrame\(\) \{[^}]*?tl\.time\(([\d.]+)\)/)[1]);
+  const lastBeadLands = Number(gather[2]) + Number(gather[1]);
+  assert.equal(releaseAt, 2.95);
+  assert.ok(Math.abs(releaseAt - lastBeadLands - 0.65) < 1e-9, 'the hold is 0.65 s (it was 0.95 s)');
+  assert.ok(Math.abs(Number(sweep[2]) + Number(sweep[1]) - releaseAt) < 1e-9, 'the light has crossed by the time the beads lift');
+  assert.ok(holdFrameAt >= lastBeadLands && holdFrameAt < releaseAt, 'the still frame is taken inside the hold');
+  assert.ok(Math.abs((holdFrameAt - Number(sweep[2])) / Number(sweep[1]) - 0.731) < 0.01, 'with the light where it was in the old stills (73% across: 0.95 s into a 1.3 s sweep)');
 });
 
 test('index.html: every Home block, the footer and the three fixed or top-level extras carry data-reveal', () => {
