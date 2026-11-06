@@ -9,6 +9,7 @@ This repo is PUBLIC. Never commit secrets, private notes or anything you would n
 - Work on a branch. Pushing a branch does not change the live site.
 - Relative paths only (`css/base.css`, never `/css/base.css`). The site lives under `/MaxDB/`.
 - Tag `v1-single-file` = the original one-file version. Rollback reference.
+- Tag `v2-three-readings` (commit 847d4ef, pushed 2026-11-06) = the site as it was live before the refocus: the CV in three readings plus All, build 1 Hydrogen. Rollback reference, and the source if he wants the three readings back.
 - Before every push to `main`: run `node scripts/stamp.mjs`, commit what it changes, then merge and push, and tell the owner the word it printed (see "The version word" below). He can only judge changes from his phone on the live site.
 
 ## Structure
