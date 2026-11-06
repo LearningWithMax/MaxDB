@@ -22,9 +22,6 @@
   --globe-scrim-strong:rgba(16,16,18,.92); --globe-scrim-mid:rgba(16,16,18,.6);
   --globe-mono:var(--font-mono);
 
-  /* a lens color is only used where a lens is named */
-  --lens-chem:var(--teal); --lens-ops:var(--blue); --lens-cust:var(--orange);
-
   /* type: each stack ends in a generic family, so text stays visible while a font loads */
   --font-serif:"Instrument Serif", Georgia, "Times New Roman", serif;
   --font-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;

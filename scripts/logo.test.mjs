@@ -11,10 +11,6 @@ test('the banner logo is one fixed chrome image', () => {
   assert.match(html, /<img id="logoImg" class="logo-img" src="img\/logo\/chrome-banner\.webp" alt="MDB"/);
 });
 
-test('the lens never changes the banner logo: lens.js does not touch it or load other stills', () => {
-  assert.doesNotMatch(read('js/lens.js'), /logoImg|-banner\.webp|LENS_FINISH|logoSrcFor|swapLogo/);
-});
-
 test('no script swaps or fades the logo image (the glide path may still read its position)', () => {
   for (const f of fs.readdirSync(new URL('../js/', import.meta.url)).filter((n) => n.endsWith('.js'))) {
     const src = read('js/' + f);

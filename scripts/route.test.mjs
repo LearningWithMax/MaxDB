@@ -3,15 +3,16 @@ import assert from 'node:assert/strict';
 import { loadClassic } from './lib/load-classic.mjs';
 
 import fs from 'node:fs';
-const { parseRoute, buildHash, normalizeLens, parseProject, CASE_IDS, PAGES } = loadClassic('js/route.js', ['parseRoute', 'buildHash', 'normalizeLens', 'parseProject', 'CASE_IDS', 'PAGES']);
+const { parseRoute, buildHash, parseProject, CASE_IDS, PAGES } = loadClassic('js/route.js', ['parseRoute', 'buildHash', 'parseProject', 'CASE_IDS', 'PAGES']);
+const route = (h) => ({ ...parseRoute(h) });
 
 test('the Projects page is a page, and the website has a case view', () => {
   assert.deepEqual([...PAGES], ['home', 'cv', 'projects', 'trip']);
   assert.deepEqual([...CASE_IDS], ['site']);
 });
 
-test('parseRoute: #projects and any case address land on the Projects page with the blended lens', () => {
-  for (const h of ['#projects', '#projects/site', '#PROJECTS/SITE', '#projects/zzz']) assert.deepEqual({ ...parseRoute(h) }, { page: 'projects', lens: 'all' }, h);
+test('parseRoute: #projects and any case address land on the Projects page', () => {
+  for (const h of ['#projects', '#projects/site', '#PROJECTS/SITE', '#projects/zzz']) assert.deepEqual(route(h), { page: 'projects' }, h);
 });
 
 test('parseProject: only a known case id on the Projects page, case-insensitive; everything else is null', () => {
@@ -22,58 +23,52 @@ test('parseProject: only a known case id on the Projects page, case-insensitive;
 
 test('buildHash: a case id only appears for the Projects page and only when it is a known case', () => {
   assert.equal(buildHash('projects'), '#projects');
-  assert.equal(buildHash('projects', undefined, 'site'), '#projects/site');
-  assert.equal(buildHash('projects', undefined, 'zzz'), '#projects');
-  assert.equal(buildHash('cv', 'ops', 'site'), '#cv/ops');
+  assert.equal(buildHash('projects', 'site'), '#projects/site');
+  assert.equal(buildHash('projects', 'zzz'), '#projects');
+  assert.equal(buildHash('cv', 'site'), '#cv');
 });
 
 test('nav.js routes the case view: goTo takes a project, builds the hash with it, tells the page, and logs Projects', () => {
   const nav = fs.readFileSync('js/nav.js', 'utf8');
   assert.match(nav, /vlogPageNames = \{ home:'Home', cv:'CV', projects:'Projects', trip:'Trip' \}/);
-  assert.match(nav, /function goTo\(page, lens, fromHash, project\)/);
-  assert.match(nav, /buildHash\(page, lens, project\)/);
+  assert.match(nav, /function goTo\(page, fromHash, project\)/);
+  assert.match(nav, /buildHash\(page, project\)/);
   assert.match(nav, /parseProject\(window\.location\.hash\)/);
   assert.match(nav, /page === 'projects' && window\.setProjectView\)\s*setProjectView\(project \|\| null\)/);
 });
 
-test('parseRoute: empty hash and #home are home with the blended lens', () => {
-  assert.deepEqual({ ...parseRoute('') }, { page: 'home', lens: 'all' });
-  assert.deepEqual({ ...parseRoute('#home') }, { page: 'home', lens: 'all' });
+test('parseRoute: empty hash and #home are home', () => {
+  assert.deepEqual(route(''), { page: 'home' });
+  assert.deepEqual(route('#home'), { page: 'home' });
 });
 
-test('parseRoute: #cv is the CV with the blended lens', () => {
-  assert.deepEqual({ ...parseRoute('#cv') }, { page: 'cv', lens: 'all' });
+test('parseRoute: #cv is the CV', () => {
+  assert.deepEqual(route('#cv'), { page: 'cv' });
 });
 
-test('parseRoute: #cv/ops carries the lens, case-insensitively', () => {
-  assert.deepEqual({ ...parseRoute('#cv/ops') }, { page: 'cv', lens: 'ops' });
-  assert.deepEqual({ ...parseRoute('#CV/OPS') }, { page: 'cv', lens: 'ops' });
+test('parseRoute: the old reading addresses still open the CV, so links shared before the refocus keep working', () => {
+  for (const h of ['#cv/cust', '#cv/ops', '#cv/chem', '#cv/all', '#CV/OPS']) assert.deepEqual(route(h), { page: 'cv' }, h);
+});
+
+test('buildHash: the CV is always #cv, so an old reading address is rewritten to #cv', () => {
+  assert.equal(buildHash('cv'), '#cv');
+  assert.equal(buildHash(parseRoute('#cv/ops').page), '#cv');
+  assert.equal(buildHash('home'), '#home');
+  assert.equal(buildHash('trip'), '#trip');
 });
 
 test('parseRoute: odd hashes never give a blank page (Review Focus 1)', () => {
-  assert.deepEqual({ ...parseRoute('#cv/foo') }, { page: 'cv', lens: 'all' });
-  assert.deepEqual({ ...parseRoute('#cv/') }, { page: 'cv', lens: 'all' });
-  assert.deepEqual({ ...parseRoute('#cv/ops/x') }, { page: 'cv', lens: 'ops' });
-  assert.deepEqual({ ...parseRoute('#nope') }, { page: 'home', lens: 'all' });
-  assert.deepEqual({ ...parseRoute(undefined) }, { page: 'home', lens: 'all' });
+  assert.deepEqual(route('#cv/foo'), { page: 'cv' });
+  assert.deepEqual(route('#cv/'), { page: 'cv' });
+  assert.deepEqual(route('#cv/ops/x'), { page: 'cv' });
+  assert.deepEqual(route('#nope'), { page: 'home' });
+  assert.deepEqual(route(undefined), { page: 'home' });
 });
 
 test('parseRoute: #trip is the Trip page, and the old #map link lands on the same page', () => {
-  for (const h of ['#trip', '#TRIP', '#map', '#MAP', '#trip/x', '#map/x']) assert.deepEqual({ ...parseRoute(h) }, { page: 'trip', lens: 'all' }, h);
+  for (const h of ['#trip', '#TRIP', '#map', '#MAP', '#trip/x', '#map/x']) assert.deepEqual(route(h), { page: 'trip' }, h);
 });
 
-test('buildHash: lens only appears for the CV and never for all', () => {
-  assert.equal(buildHash('cv', 'ops'), '#cv/ops');
-  assert.equal(buildHash('cv', 'all'), '#cv');
-  assert.equal(buildHash('cv'), '#cv');
-  assert.equal(buildHash('home'), '#home');
-  assert.equal(buildHash('trip'), '#trip');
-  assert.equal(buildHash('cv', 'zzz'), '#cv');
-});
-
-test('normalizeLens: valid lenses pass, anything else is all', () => {
-  assert.equal(normalizeLens('cust'), 'cust');
-  assert.equal(normalizeLens('CHEM'), 'chem');
-  assert.equal(normalizeLens(''), 'all');
-  assert.equal(normalizeLens(null), 'all');
+test('route.js and nav.js know no reading any more (one CV reading since the refocus, 2026-11-06)', () => {
+  for (const f of ['js/route.js', 'js/nav.js']) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), /lens/i, f);
 });

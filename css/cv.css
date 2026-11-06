@@ -85,9 +85,3 @@
 }
 .cert-popup-name{font:400 26px/1.2 var(--font-serif); color:var(--ink); margin-bottom:var(--sp-4);}
 .cert-popup-meta{font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
-
-/* Lens text variants: every variant is in the HTML, only the active lens shows. No JavaScript means data-lens stays "all". */
-#page-cv[data-lens="all"] [data-lens-text]:not([data-lens-text="all"]),
-#page-cv[data-lens="chem"] [data-lens-text]:not([data-lens-text="chem"]),
-#page-cv[data-lens="ops"] [data-lens-text]:not([data-lens-text="ops"]),
-#page-cv[data-lens="cust"] [data-lens-text]:not([data-lens-text="cust"]){display:none}

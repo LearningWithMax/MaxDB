@@ -63,12 +63,12 @@ test('img/grain.png is a 128 by 128 PNG of at most 20000 bytes', () => {
 import { checkDeparturesPreview } from './lib/rules.mjs';
 
 const JOBS = [
-  ['2025', 'YASHRESH', 'CANN.EDENN', 'TEAM LEAD, GREENHOUSES'], ['2024', 'CARACAS', 'AVICAMPO', 'FIELD VISITS, IPPE ATLANTA'],
-  ['2023', 'MADRID', 'INTELCIA', 'TEAM GREW FROM 10 TO 35'], ['2022', 'CARACAS', 'CHACAO', 'TECH REP, LAB AND FEED'],
-  ['2021', 'REHOVOT', 'WEIZMANN', 'ALGAE CALCITE RESEARCH'], ['2019', 'CLERMONT-FD', 'MICHELIN', 'MOLECULAR MODELING + TESTS'],
+  ['2025', 'YASHRESH', 'CANN.EDENN', 'OPERATOR TO TEAM LEAD'], ['2024', 'CARACAS', 'AVICAMPO', 'CLIENTS AT IPPE ATLANTA'],
+  ['2023', 'MADRID', 'INTELCIA', 'TRAINED 30+ NEW AGENTS'], ['2022', 'CARACAS', 'CHACAO', 'CLIENT ACCOUNT FOLLOW-UP'],
+  ['2021', 'REHOVOT', 'WEIZMANN', 'ALGAE CALCITE RESEARCH'], ['2019', 'CLERMONT-FD', 'MICHELIN', 'LED A NEW SIMULATION PROJECT'],
   ['2019', 'PRAGUE', 'ICPF', 'HPLC RESEARCH INTERNSHIP'],
 ];
-const jobTag = ([y, p, c, l]) => `<div class="job" data-board data-year="${y}" data-place="${p}" data-company="${c}" data-line-all="${l}" data-line-chem="X">`;
+const jobTag = ([y, p, c, l]) => `<div class="job" data-board data-year="${y}" data-place="${p}" data-company="${c}" data-line="${l}">`;
 const depRow = ([y, p, c, l]) => `<div class="dep-row"><span class="dep-year">${y}</span><span class="dep-place">${p}</span><span class="dep-company">${c}</span><span class="dep-line">${l}</span></div>`;
 const homePage = (rows, more = '4 MORE JOBS &middot; OPEN THE CV &rarr;') => rows.map(depRow).join('') + `<div class="dep-more">${more}</div>` + JOBS.map(jobTag).join('');
 

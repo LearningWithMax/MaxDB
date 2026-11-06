@@ -44,12 +44,11 @@ async function captureSite(b) {
   await b.sleep(4500);
   await save(b, '03-home.png');
 
-  // 4 and 5. The CV, then the board flipped to the Operations reading with its tabs and caption in view.
+  // 4 and 5. The CV, then the board (one reading since the refocus) with its line and caption in view.
   await b.goto(base + '/#cv');
   await b.sleep(3500);
   await b.eval('window.scrollTo(0, 0)');
   await save(b, '04-cv.png');
-  await b.eval("[...document.querySelectorAll('.cv-board-tabs button')].find(x => /operations/i.test(x.textContent)).click()");
   await b.eval("(() => { const s = document.querySelector('.cv-board-sub').getBoundingClientRect(); window.scrollBy(0, s.top - 90); })()");
   await b.sleep(5000);
   await save(b, '05-board.png');

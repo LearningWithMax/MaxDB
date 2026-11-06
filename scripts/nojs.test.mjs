@@ -8,8 +8,8 @@ test('without JavaScript every page is shown, so the CV text is readable (and fi
   assert.match(html, /<noscript>\s*<style>[^<]*section\.page\s*\{[^}]*display:\s*block\s*!important/);
 });
 
-test('without JavaScript the CV starts on the blended reading', () => {
-  assert.match(html, /<section class="page" id="page-cv" data-lens="all">/);
+test('without JavaScript the CV is the same one reading (there is no other since the refocus)', () => {
+  assert.match(html, /<section class="page" id="page-cv">/);
 });
 
 test('the raw HTML never ships the intro class: only the inline script adds it', () => {

@@ -1,4 +1,4 @@
-/* Home: hero, lens list, stats. The preview cards join this file in Task 5. */
+/* Home: hero, the three buttons, stats. The preview cards join this file in Task 5. */
 .hero{padding:var(--sp-72) 0 var(--sp-32); position:relative;}
 .hero .wrap{position:relative; z-index:1;}
 /* paper glow: a faint warm light from behind the name, and a second one at the top right. Static, paper only (dark has no glow). */
@@ -58,23 +58,22 @@ h1.name em{font-style:italic; color:var(--gunmetal);}
   color:var(--text-2); max-width:560px; margin:0;
 }
 
-/* the three readings: a ruled list of numbered serif words, each one opens the CV on that lens */
-.lens-list{list-style:none; margin:var(--sp-48) 0 0; padding:0; border-top:1px solid var(--ink);}
-.lens-list li{border-bottom:1px solid var(--rule); transition:border-color .16s ease-out;}
-.lens-list li:hover, .lens-list li:focus-within{border-bottom-color:var(--gold);}
-.lens-btn{
-  display:grid; grid-template-columns:44px minmax(0, 320px) 1fr 9px; align-items:baseline; column-gap:var(--sp-16);
-  padding:var(--sp-12) 0; color:inherit; text-decoration:none;
+/* the three ways in (owner, 2026-11-06): CV, Projects and Trip as big numbered serif words on a ruled list, each row one link */
+.cta-list{list-style:none; margin:var(--sp-48) 0 0; padding:0; border-top:1px solid var(--ink);}
+.cta-list li{border-bottom:1px solid var(--rule); transition:border-color .16s ease-out;}
+.cta-list li:hover, .cta-list li:focus-within{border-bottom-color:var(--gold);}
+.cta-btn{
+  display:grid; grid-template-columns:44px minmax(0, 260px) 1fr auto; align-items:center; column-gap:var(--sp-16);
+  padding:var(--sp-24) 0; color:inherit; text-decoration:none;
 }
-.lens-btn:focus-visible{outline-offset:-2px;}
-.lens-btn .n{font:400 11px/1 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
-.lens-btn strong{font:400 26px/1.15 var(--font-serif); color:var(--ink);}
-.lens-btn .lens-sub{font:400 11px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
+.cta-btn:focus-visible{outline-offset:-2px;}
+.cta-btn .n{font:400 11px/1 var(--font-mono); letter-spacing:.03em; color:var(--mute);}
+.cta-btn strong{font:400 clamp(32px, 4.4vw, 48px)/1.05 var(--font-serif); color:var(--ink);}
+.cta-btn .cta-sub{font:400 12px/1.5 var(--font-mono); letter-spacing:.03em; color:var(--text-2); max-width:44ch;}
+.cta-btn .cta-arrow{font:400 28px/1 var(--font-serif); color:var(--gold); transition:transform .2s ease-out;}
+.cta-btn:hover .cta-arrow, .cta-btn:focus-visible .cta-arrow{transform:translateX(6px);}
+@media (prefers-reduced-motion:reduce){ .cta-btn .cta-arrow{transition:none;} }
 .dot{width:9px; height:9px; border-radius:50%; display:inline-block; align-self:center; justify-self:end;}
-.dot-chem{background:var(--teal);}
-.dot-ops{background:var(--blue);}
-.dot-cust{background:var(--orange);}
-:root[data-theme="light"] .dot-cust{background:#d9532a;}
 
 /* stats: a ruled two by two of big serif numerals */
 .stat-row{display:grid; grid-template-columns:repeat(2, 1fr); border-top:1px solid var(--ink); margin:var(--sp-48) 0 var(--sp-72);}
@@ -116,8 +115,8 @@ h1.name em{font-style:italic; color:var(--gunmetal);}
 
 @media (max-width:1000px){
   .previews{grid-template-columns:1fr;}
-  .lens-btn{grid-template-columns:44px 1fr 9px; grid-template-areas:"n name dot" ". sub .";}
-  .lens-btn .n{grid-area:n;} .lens-btn strong{grid-area:name;} .lens-btn .lens-sub{grid-area:sub; margin-top:var(--sp-4);} .lens-btn .dot{grid-area:dot;}
+  .cta-btn{grid-template-columns:44px 1fr auto; grid-template-areas:"n name arrow" ". sub .";}
+  .cta-btn .n{grid-area:n;} .cta-btn strong{grid-area:name;} .cta-btn .cta-sub{grid-area:sub; margin-top:var(--sp-8);} .cta-btn .cta-arrow{grid-area:arrow;}
 }
 @media (max-width:700px){
   .previews{grid-template-columns:1fr; margin-top:var(--sp-72);}

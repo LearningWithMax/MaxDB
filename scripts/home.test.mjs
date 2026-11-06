@@ -7,30 +7,26 @@ const html = read('index.html');
 const home = html.slice(html.indexOf('id="page-home"'), html.indexOf('id="page-cv"'));
 const decode = (s) => s.replace(/&amp;/g, '&');
 
-test('Home has three lens links that open the CV on that lens, numbered 01 to 03', () => {
-  const links = [...html.matchAll(/<a class="lens-btn" href="([^"]+)">\s*<span class="n">(\d\d)<\/span>\s*<strong>([^<]+)<\/strong>/g)].map((m) => [m[1], m[2], decode(m[3])]);
+test('Home has three big buttons under the name: CV, Projects and Trip, numbered 01 to 03 (owner, 2026-11-06)', () => {
+  const links = [...home.matchAll(/<a class="cta-btn" href="([^"]+)">\s*<span class="n">(\d\d)<\/span>\s*<strong>([^<]+)<\/strong>\s*<span class="cta-sub">([^<]+)<\/span>/g)].map((m) => [m[1], m[2], decode(m[3]), decode(m[4])]);
   assert.deepEqual(links, [
-    ['#cv/cust', '01', 'Customer-Facing'],
-    ['#cv/ops', '02', 'Operations'],
-    ['#cv/chem', '03', 'Chemistry & R&D'],
+    ['#cv', '01', 'CV', 'Every job, the skills and the certificates.'],
+    ['#projects', '02', 'Projects', 'Web apps I build with AI: a live demo, this site, more in progress.'],
+    ['#trip', '03', 'Trip', 'A flight over the globe through the places I lived, studied and worked.'],
   ]);
 });
 
-test('Home lens links live in #page-home, before the CV page', () => {
-  const homeAt = html.indexOf('id="page-home"'), cv = html.indexOf('id="page-cv"');
-  for (const m of html.matchAll(/class="lens-btn"/g)) assert.ok(m.index > homeAt && m.index < cv);
-});
-
-test('the lens links are one ordered list: each row has a one-line description and a colored dot', () => {
-  const list = home.match(/<ol class="lens-list[^"]*"[^>]*>([\s\S]*?)<\/ol>/);
-  assert.ok(list, 'ol.lens-list');
+test('the buttons are one ordered list in #page-home, each with an arrow, and no reading link is left', () => {
+  const list = home.match(/<ol class="cta-list[^"]*"[^>]*>([\s\S]*?)<\/ol>/);
+  assert.ok(list, 'ol.cta-list');
   const rows = [...list[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1]);
   assert.equal(rows.length, 3);
-  const dots = ['dot-cust', 'dot-ops', 'dot-chem'];
-  rows.forEach((row, i) => {
-    assert.match(row, /<span class="lens-sub">[^<]{10,}<\/span>/, 'row ' + (i + 1) + ' has a description');
-    assert.ok(row.includes('<i class="dot ' + dots[i] + '"></i>'), 'row ' + (i + 1) + ' has ' + dots[i]);
-  });
+  rows.forEach((row, i) => assert.match(row, /<span class="cta-arrow" aria-hidden="true">&rarr;<\/span>/, 'row ' + (i + 1) + ' has an arrow'));
+  assert.doesNotMatch(html, /lens-list|lens-btn|lens-sub|href="#cv\//);
+});
+
+test('the line under the name says the goal (owner, 2026-11-06)', () => {
+  assert.match(home, /<p class="role-line[^"]*"[^>]*>Customer success and onboarding, in French, Spanish and English\. Seven jobs across five countries, team lead within months in the latest one, and the go-to person for a team of 35 agents before that\.<\/p>/);
 });
 
 test('the four stats count up: 5, 30+, 4, and the years since the first job, which is computed so it never goes stale', () => {
@@ -64,6 +60,6 @@ test('css/home.css pins the brief: name size, tracking, phone size, italic gunme
   assert.match(em[1], /font-style:\s*italic/);
   assert.match(em[1], /color:\s*var\(--gunmetal\)/);
   assert.match(css, /\.stat \.num\s*\{[^}]*font-size:\s*clamp\(52px,\s*6vw,\s*64px\)/);
-  assert.match(css, /\.dot-cust\s*\{[^}]*var\(--orange\)/);
-  assert.match(css, /:root\[data-theme="light"\] \.dot-cust\s*\{[^}]*#d9532a/);
+  assert.match(css, /\.cta-btn strong\s*\{[^}]*clamp\(32px,[^}]*var\(--font-serif\)/, 'the buttons are bigger than the old 26px reading words');
+  assert.doesNotMatch(css, /\.dot-(cust|ops|chem)|lens-/, 'no reading styles are left');
 });

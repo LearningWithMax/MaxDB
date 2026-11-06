@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TRIP_STOPS } from '../modules/trip-stops.js';
 import { STOPS, KINDS } from '../modules/globe-data.js';
-import { findBannedText, INTELCIA_FACT } from './lib/rules.mjs';
+import { findBannedText } from './lib/rules.mjs';
 import { tripListHtml, checkTripList, TRIP_LIST_START, TRIP_LIST_END } from './lib/trip-list.mjs';
 
 test('eleven stops, in the approved order, with the approved kinds', () => {
@@ -35,12 +35,12 @@ test('positions and countries are Fable\'s, matched by city, so the site and the
   }
 });
 
-test('the wording follows the copy rules, and the Intelcia stop uses the approved sentence and the CV title', () => {
+test('the wording follows the copy rules, and the Intelcia stop is the approved sentence with the contract title', () => {
   for (const s of TRIP_STOPS) assert.deepEqual(findBannedText(`${s.city} what`, s.what), [], s.city);
   const intelcia = TRIP_STOPS.find((s) => /Intelcia/.test(s.what));
   assert.ok(intelcia, 'an Intelcia stop');
-  assert.ok(intelcia.what.includes(INTELCIA_FACT), 'the approved sentence, word for word');
-  assert.ok(intelcia.what.includes('Operations support and team coordinator'));
+  // the owner's approved sentence was 128 characters; trimmed to the 120 limit ("and" and "person" dropped), told to him 2026-11-06
+  assert.equal(intelcia.what, 'Customer service agent at Intelcia, the go-to for quality, training and support as the team grew from about 10 to 35.');
   assert.doesNotMatch(intelcia.what, /Teams|Microsoft/);
   assert.equal(TRIP_STOPS.filter((s) => /Intelcia/.test(s.what)).length, 1);
 });

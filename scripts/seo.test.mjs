@@ -23,7 +23,7 @@ test('the config: an https site address ending in a slash, a short title with th
 
 test('seoHeadHtml: the title, the description and the canonical address of the one page', () => {
   const h = head();
-  assert.equal(h.match(/<title>([^<]*)<\/title>/)[1], SEO.title);
+  assert.equal(unescape(h.match(/<title>([^<]*)<\/title>/)[1]), SEO.title);      // the title has an "&" since the refocus
   assert.equal([...h.matchAll(/<title>/g)].length, 1);
   assert.equal(meta('name', 'description'), SEO.description);
   assert.equal(attr('link rel="canonical"', 'href'), SEO.site);
@@ -34,7 +34,7 @@ test('seoHeadHtml: Open Graph tags (LinkedIn, WhatsApp, Facebook, Slack, iMessag
   const h = head();
   assert.equal(meta('property', 'og:type'), 'website');
   assert.equal(meta('property', 'og:site_name'), SEO.name);
-  assert.equal(meta('property', 'og:title'), SEO.title);
+  assert.equal(unescape(meta('property', 'og:title')), SEO.title);
   assert.equal(meta('property', 'og:description'), SEO.description);
   assert.equal(meta('property', 'og:url'), SEO.site);
   assert.equal(meta('property', 'og:locale'), 'en_US');
@@ -47,7 +47,7 @@ test('seoHeadHtml: Open Graph tags (LinkedIn, WhatsApp, Facebook, Slack, iMessag
 
 test('seoHeadHtml: the same card for X (Twitter): a large image card with title, description, image and its description', () => {
   assert.equal(meta('name', 'twitter:card'), 'summary_large_image');
-  assert.equal(meta('name', 'twitter:title'), SEO.title);
+  assert.equal(unescape(meta('name', 'twitter:title')), SEO.title);
   assert.equal(meta('name', 'twitter:description'), SEO.description);
   assert.equal(meta('name', 'twitter:image'), SEO.site + SEO.image);
   assert.equal(meta('name', 'twitter:image:alt'), SEO.imageAlt);

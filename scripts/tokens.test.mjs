@@ -65,11 +65,9 @@ test('every --font-* ends in a generic family, so a slow or blocked font never l
   for (const [k, v] of fonts) assert.match(v, /(serif|monospace|sans-serif)\s*$/, k);
 });
 
-test('layout tokens: the lens colors point at the lens tokens, spacing, radii and widths match the brief', () => {
+test('layout tokens: no lens colors are left (one CV reading), spacing, radii and widths match the brief', () => {
   const root = block(':root');
-  assert.equal(root['--lens-chem'], 'var(--teal)');
-  assert.equal(root['--lens-ops'], 'var(--blue)');
-  assert.equal(root['--lens-cust'], 'var(--orange)');
+  for (const k of ['--lens-chem', '--lens-ops', '--lens-cust']) assert.equal(root[k], undefined, k);
   const sp = { 4: '4px', 8: '8px', 12: '12px', 16: '16px', 24: '24px', 32: '32px', 48: '48px', 72: '72px' };
   for (const [n, v] of Object.entries(sp)) assert.equal(root['--sp-' + n], v, '--sp-' + n);
   assert.equal(root['--r-obj'], '12px');

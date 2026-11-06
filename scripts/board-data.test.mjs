@@ -1,31 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseJobs, dotFor, rowsFromDom, LENS_ORDER } from '../modules/board-data.js';
+import * as boardData from '../modules/board-data.js';
+const { parseJobs, rowsFromDom } = boardData;
 
-const row = (over = {}) => ({
-  year: '2025', place: 'Yashresh', company: 'Cann.Edenn',
-  lines: { all: 'Team lead, greenhouses', chem: 'Regulated production', ops: 'Ran daily greenhouse flow', cust: 'Link: crew and management' },
-  weights: { chem: 0.6, ops: 1, cust: 0.5 },
-  ...over,
-});
+const row = (over = {}) => ({ year: '2025', place: 'Yashresh', company: 'Cann.Edenn', line: 'Operator to team lead', ...over });
 
-test('parseJobs upper-cases every line, place and company', () => {
+test('parseJobs upper-cases the line, the place and the company', () => {
   const [job] = parseJobs([row()]);
-  assert.equal(job.lines.all, 'TEAM LEAD, GREENHOUSES');
-  assert.equal(job.lines.cust, 'LINK: CREW AND MANAGEMENT');
+  assert.equal(job.line, 'OPERATOR TO TEAM LEAD');
   assert.equal(job.place, 'YASHRESH');
   assert.equal(job.company, 'CANN.EDENN');
-  assert.equal(job.weights.ops, 1);
+  assert.equal(job.year, '2025');
 });
 
 test('parseJobs throws "line too long" for a 29-character line and accepts 28', () => {
-  const ok = 'A'.repeat(28), tooLong = 'A'.repeat(29);
-  assert.doesNotThrow(() => parseJobs([row({ lines: { all: ok, chem: ok, ops: ok, cust: ok } })]));
-  assert.throws(() => parseJobs([row({ lines: { all: ok, chem: ok, ops: tooLong, cust: ok } })]), /line too long/);
+  assert.doesNotThrow(() => parseJobs([row({ line: 'A'.repeat(28) })]));
+  assert.throws(() => parseJobs([row({ line: 'A'.repeat(29) })]), /line too long/);
 });
 
-test('parseJobs throws "missing lens" when a lens line is absent', () => {
-  assert.throws(() => parseJobs([row({ lines: { all: 'A', chem: 'B', cust: 'D' } })]), /missing lens/);
+test('parseJobs throws "missing line" when a job has no line', () => {
+  assert.throws(() => parseJobs([row({ line: undefined })]), /missing line/);
 });
 
 test('parseJobs rejects a place or company wider than its column', () => {
@@ -34,30 +28,17 @@ test('parseJobs rejects a place or company wider than its column', () => {
 });
 
 test('parseJobs rejects a character the flaps cannot show', () => {
-  assert.throws(() => parseJobs([row({ lines: { all: 'Plasson (Israel)', chem: 'B', ops: 'C', cust: 'D' } })]), /unsupported character/);
+  assert.throws(() => parseJobs([row({ line: 'Plasson (Israel)' })]), /unsupported character/);
 });
 
-test('parseJobs rejects a weight outside 0 to 1', () => {
-  assert.throws(() => parseJobs([row({ weights: { chem: 2, ops: 1, cust: 1 } })]), /weight/);
-});
-
-test('dotFor: full at 0.8, half at 0.45, empty below', () => {
-  assert.equal(dotFor(1), '\u25cf');
-  assert.equal(dotFor(0.8), '\u25cf');
-  assert.equal(dotFor(0.5), '\u25d1');
-  assert.equal(dotFor(0.2), '\u25cb');
-});
-
-test('rowsFromDom reads the data attributes of every .job[data-board]', () => {
-  const el = { dataset: { year: '2024', place: 'Caracas', company: 'Avicampo', lineAll: 'A', lineChem: 'B', lineOps: 'C', lineCust: 'D', wChem: '0.4', wOps: '0.6', wCust: '1' } };
+test('rowsFromDom reads the year, place, company and line of every .job[data-board]', () => {
+  const el = { dataset: { year: '2024', place: 'Caracas', company: 'Avicampo', line: 'Clients at IPPE Atlanta' } };
   const root = { querySelectorAll: (sel) => (sel === '.job[data-board]' ? [el] : []) };
-  const rows = rowsFromDom(root);
-  assert.equal(rows.length, 1);
-  assert.deepEqual(rows[0].lines, { all: 'A', chem: 'B', ops: 'C', cust: 'D' });
-  assert.deepEqual(rows[0].weights, { chem: 0.4, ops: 0.6, cust: 1 });
-  assert.equal(rows[0].company, 'Avicampo');
+  assert.deepEqual(rowsFromDom(root), [{ year: '2024', place: 'Caracas', company: 'Avicampo', line: 'Clients at IPPE Atlanta' }]);
 });
 
-test('the four reading buttons run all, customer-facing, operations, chemistry (owner, 2026-10-27)', () => {
-  assert.deepEqual(LENS_ORDER, ['all', 'cust', 'ops', 'chem']);
+test('no reading is left in the board data: no lens order, no weights, no dots (one CV reading, owner 2026-11-06)', () => {
+  assert.equal('LENS_ORDER' in boardData, false);
+  assert.equal('dotFor' in boardData, false);
+  assert.doesNotMatch(JSON.stringify(parseJobs([row()])), /weights|lines/);
 });

@@ -11,23 +11,19 @@ function ensureBoard(){
   if(boardMount || !host) return;
   boardMount = import('../modules/board.js').then(m => m.mountBoard(host)).catch(e => console.error('board:', e));
 }
-// goTo('cv') keeps the lens the visitor already chose; goTo('cv', 'ops') sets it; goTo('projects', undefined, false, 'site') opens
-// that project's case view. Routes are parsed by route.js.
-function goTo(page, lens, fromHash, project){
-  if(lens === undefined && page === 'cv' && window.getLens) lens = getLens();
-  const route = parseRoute(buildHash(page, lens, project));
-  page = route.page; lens = route.lens;
+// goTo('cv') opens the CV; goTo('projects', false, 'site') opens that project's case view. Routes are parsed by route.js.
+function goTo(page, fromHash, project){
+  page = parseRoute(buildHash(page, project)).page;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.navlinks button').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  const wanted = buildHash(page, lens, project);
+  const wanted = buildHash(page, project);
   const action = hashAction(window.location.hash, wanted, !!fromHash);
   if(action === 'replace') window.history.replaceState(null, '', wanted);
   else if(action === 'push'){
     suppressHashChange = true;
     window.location.hash = wanted;
   }
-  if(page === 'cv' && window.setLens) setLens(lens);
   if(page === 'cv') ensureBoard();
   if(page === 'projects' && window.setProjectView) setProjectView(project || null);
   if(page === 'trip' && window.mountTrip) mountTrip(); else if(window.disposeTrip) disposeTrip();      // the globe lives only while #trip is shown
@@ -39,8 +35,7 @@ function goTo(page, lens, fromHash, project){
 
 function initFromHash(){
   if(suppressHashChange){ suppressHashChange = false; return; }
-  const r = parseRoute(window.location.hash);
-  goTo(r.page, r.lens, true, parseProject(window.location.hash));
+  goTo(parseRoute(window.location.hash).page, true, parseProject(window.location.hash));
 }
 window.addEventListener('hashchange', initFromHash);
 initFromHash();

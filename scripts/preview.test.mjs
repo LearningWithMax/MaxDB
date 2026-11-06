@@ -9,11 +9,11 @@ const articles = section ? [...section[1].matchAll(/<article class="preview ([^"
 const dep = articles.find((a) => /preview-departures/.test(a[1]));
 const trip = articles.find((a) => /preview-trip/.test(a[1]));
 
-test('Home has a previews section between the lens list and the stats, with exactly two cards', () => {
+test('Home has a previews section between the three buttons and the stats, with exactly two cards', () => {
   assert.ok(section, 'section.previews');
   assert.equal(articles.length, 2);
   const at = (s) => html.indexOf(s);
-  assert.ok(at('class="lens-list') < at('<section class="previews"') && at('<section class="previews"') < at('class="stat-row"'));
+  assert.ok(at('class="cta-list') > 0 && at('class="cta-list') < at('<section class="previews"') && at('<section class="previews"') < at('class="stat-row"'));
 });
 
 test('each card is one link: exactly one empty stretched <a class="preview-link"> and no other link', () => {

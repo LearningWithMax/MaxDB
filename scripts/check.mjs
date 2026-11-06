@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { parseEsModule, checkImportMap, verifyManifest, checkLensVariants, findBannedText, checkBoardLines, checkLogoAssets, checkIntelciaFact, checkFonts, checkCssVars, checkViewport, checkDeparturesPreview, checkNoLoops, FONT_REQUIRED, checkFontCoverage, checkSiteGlyphs, checkProjectImages, checkNoVideo, checkProjectNames } from './lib/rules.mjs';
+import { parseEsModule, checkImportMap, verifyManifest, findBannedText, checkBoardLines, checkLogoAssets, checkIntelciaFact, checkFonts, checkCssVars, checkViewport, checkDeparturesPreview, checkNoLoops, FONT_REQUIRED, checkFontCoverage, checkSiteGlyphs, checkProjectImages, checkNoVideo, checkProjectNames } from './lib/rules.mjs';
 import { loadClassic } from './lib/load-classic.mjs';
 import { checkTripList } from './lib/trip-list.mjs';
 import { fontCodePoints } from './lib/woff2-cmap.mjs';
@@ -65,20 +65,15 @@ const mapProblems = checkImportMap(html, (rel) => fs.existsSync(path.join(root, 
 mapProblems.forEach(problem);
 if (!mapProblems.length) ok('import map clean (or absent)');
 
-// ---- 3b. lens text groups are complete ----
-const lensProblems = checkLensVariants(html);
-lensProblems.forEach(problem);
-if (!lensProblems.length) ok('lens text groups complete (or none yet)');
-
 // ---- 3a. board jobs fit the board ----
 const boardProblems = checkBoardLines(html);
 boardProblems.forEach(problem);
 if (!boardProblems.length) ok('board jobs fit the board');
 
-// ---- 3a2. Intelcia is one fact only ----
+// ---- 3a2. Intelcia carries approved sentences only ----
 const intelciaProblems = checkIntelciaFact(html);
 intelciaProblems.forEach(problem);
-if (!intelciaProblems.length) ok('Intelcia described by the one approved fact');
+if (!intelciaProblems.length) ok('Intelcia described by approved sentences only');
 
 // ---- 3a3. Home's departures preview repeats the first three jobs ----
 const depProblems = checkDeparturesPreview(html);

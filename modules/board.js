@@ -1,20 +1,16 @@
 // Split-flap CV board (Fable's chosen version, moved onto the CV page). The flip engine (instanced quads, one draw call,
 // character wheel, cascade timing) is unchanged. Around it: the jobs are read from the CV page itself (data-board
-// attributes, see board-data.js), the four readings follow the site's lens (mdb:lens), and the board hides itself
-// when WebGL is missing. The page text below the board is the real CV, so nothing is duplicated for search engines.
+// attributes, see board-data.js), and the board hides itself when WebGL is missing. The page text below the board is
+// the real CV, so nothing is duplicated for search engines. One reading since the refocus (2026-11-06): no buttons,
+// the board flips in once and the first cell of each row stays blank (the owner's choice A).
 import * as THREE from 'three';
-import { LENS_ORDER, dotFor, parseJobs, rowsFromDom } from './board-data.js';
+import { parseJobs, rowsFromDom } from './board-data.js';
 
-const DOTS = '●◑○';                       // full, half, empty: drawn as circles in the atlas
+const DOTS = '●◑○';                       // still on the glyph wheel (the flip cycles through it), no longer shown
 const SEQ = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-+:&/' + DOTS;
 const COLS = { dot: 1, year: 4, place: 12, note: 28 };     // the company column is in the text under the board, not on it
-const LENS = {
-  all:  { name: 'All',             title: 'ALL PATHS, ONE PERSON', color: '#e8e4da' },
-  chem: { name: 'Chemistry & R&D', title: 'CHEMISTRY AND R&D',     color: '#3fcf8d' },
-  ops:  { name: 'Operations',      title: 'OPERATIONS',            color: '#4f8dff' },
-  cust: { name: 'Customer-Facing', title: 'CUSTOMER-FACING',       color: '#ff7a4d' },
-};
-const ORDER = LENS_ORDER;
+const INK = '#e8e4da';                    // the line that matters, the --board-ink token
+const TITLE = 'ALL PATHS, ONE PERSON';
 const TITLE_CELLS = 24;
 const FONT = '"Roboto Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif';
 const rgb = (hex) => { const c = parseInt(hex.slice(1), 16); return new THREE.Vector3((c >> 16 & 255) / 255, (c >> 8 & 255) / 255, (c & 255) / 255); };
@@ -24,14 +20,13 @@ const gIndex = (ch) => Math.max(0, SEQ.indexOf(ch));
 /* ----------------------------------------------------------------- mount */
 export async function mountBoard(host) {
   const noop = { dispose() {} };
-  const tabs = host.querySelector('.cv-board-tabs');
   const boardEl = host.querySelector('.cv-board-frame');
   const canvas = host.querySelector('canvas');
   const labelsEl = host.querySelector('.cv-board-labels');
 
   let JOBS;
   try {
-    JOBS = parseJobs(rowsFromDom(document)).map((j) => ({ y: j.year, p: j.place, c: j.company, w: j.weights, n: j.lines }));
+    JOBS = parseJobs(rowsFromDom(document)).map((j) => ({ y: j.year, p: j.place, c: j.company, n: j.line }));
   } catch (e) { console.error('board data:', e.message); return noop; }
   if (!JOBS.length) return noop;
 
@@ -85,7 +80,7 @@ export async function mountBoard(host) {
     uCell: { value: new THREE.Vector2(20, 30) },
     uAtlas: { value: null },
     uGrid: { value: new THREE.Vector2(GC, GR) },
-    uLens: { value: rgb(LENS.all.color) },
+    uInk: { value: rgb(INK) },
     uCream: { value: rgb('#bdb7ac') },                      // year and place: a notch dimmer than the line that matters
     uPaper: { value: rgb('#161616') },                      // classic airport: near-black flaps
   };
@@ -114,7 +109,7 @@ export async function mountBoard(host) {
         vTop = top ? 1.0 : 0.0; vGlyph = aData.y; vColor = aData.w;
       }`,
     fragmentShader: `
-      uniform sampler2D uAtlas; uniform vec2 uGrid; uniform vec3 uLens; uniform vec3 uCream; uniform vec3 uPaper;
+      uniform sampler2D uAtlas; uniform vec2 uGrid; uniform vec3 uInk; uniform vec3 uCream; uniform vec3 uPaper;
       varying vec2 vUv; varying float vShade; varying float vTop; varying float vGlyph; varying float vColor;
       void main(){
         float gi = floor(vGlyph + 0.5);
@@ -122,7 +117,7 @@ export async function mountBoard(host) {
         float vloc = vTop > 0.5 ? 0.5 + vUv.y * 0.5 : 0.5 - vUv.y * 0.5;
         vec2 uv = (vec2(col, uGrid.y - 1.0 - row) + vec2(vUv.x, vloc)) / uGrid;
         float a = texture2D(uAtlas, uv).a;
-        vec3 ink = vColor > 0.5 ? uLens : uCream;
+        vec3 ink = vColor > 0.5 ? uInk : uCream;
         vec3 paper = uPaper * mix(1.18, 0.86, vUv.y);
         vec3 c = mix(paper, ink, a) * vShade;
         c *= 1.0 - 0.55 * smoothstep(0.035, 0.0, vUv.y);               // seam at the hinge, kept off the letter
@@ -280,31 +275,18 @@ export async function mountBoard(host) {
   ro.observe(boardEl);
 
   /* ------------------------------------------------------------------ logic */
-  ORDER.forEach((l) => {
-    const b = document.createElement('button'); b.type = 'button'; b.dataset.l = l; b.textContent = LENS[l].name;
-    b.style.setProperty('--lc', LENS[l].color); b.setAttribute('aria-pressed', l === 'all');
-    b.onclick = () => { if (window.setLens) window.setLens(l); else show(l); };      // the site lens drives the board and the text below
-    tabs.appendChild(b);
-  });
-  let lens = null;
-  function show(next, first = false) {
-    lens = next;
-    const L = LENS[next];
-    uniforms.uLens.value.copy(rgb(L.color)); needsRender = true;
-    tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.l === next));
-    setText(titleCells, L.title, 0, 18);
+  // The year and place cells cascade in first, then the lines, as on the first show of the old board.
+  function show() {
+    needsRender = true;
+    setText(titleCells, TITLE, 0, 18);
     rowCells.forEach((r, i) => {
-      if (first) {
-        setText(r.year, JOBS[i].y, 150 + i * 120, 20);
-        setText(r.place, JOBS[i].p, 150 + i * 120, 20);
-      }
-      setText(r.dot, next === 'all' ? ' ' : dotFor(JOBS[i].w[next]), 120 + i * 110, 0);
-      setText(r.note, JOBS[i].n[next], 200 + i * 110, 16);
+      setText(r.year, JOBS[i].y, 150 + i * 120, 20);
+      setText(r.place, JOBS[i].p, 150 + i * 120, 20);
+      setText(r.dot, ' ', 120 + i * 110, 0);
+      setText(r.note, JOBS[i].n, 200 + i * 110, 16);
     });
     if (reduced) settle();
   }
-  const onLens = (e) => { if (e.detail.lens !== lens) show(e.detail.lens); };
-  document.addEventListener('mdb:lens', onLens);
 
   /* ----------------------------------------------------------------- render */
   function draw() {
@@ -324,12 +306,11 @@ export async function mountBoard(host) {
   uniforms.uAtlas.value = makeAtlas();
   layout();
   requestAnimationFrame(draw);
-  show(window.getLens ? window.getLens() : 'all', true);
+  show();
 
   return {
     dispose() {
       disposed = true; ro.disconnect(); active.clear();
-      document.removeEventListener('mdb:lens', onLens);
       uniforms.uAtlas.value && uniforms.uAtlas.value.dispose();
       geo.dispose(); base.dispose(); material.dispose(); renderer.dispose();
     },

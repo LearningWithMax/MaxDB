@@ -7,8 +7,8 @@
 export const SEO = {
   site: 'https://learningwithmax.github.io/MaxDB/',
   name: 'Max Duffaud Bibas',
-  title: 'Max Duffaud Bibas | CV, projects and trip',
-  description: 'Seven jobs across five countries, from the lab bench to the greenhouse floor and client visits. The CV, projects and trip of Max Duffaud Bibas. Open to remote.',
+  title: 'Max Duffaud Bibas | Customer Success & Onboarding',
+  description: 'Customer success and onboarding in French, Spanish and English. 30+ new agents trained, seven jobs across five countries. CV, projects and trip. Open to remote.',
   image: 'img/og.png',
   imageAlt: 'The chrome balloon letters MDB on a black background, with the name Max Duffaud Bibas below.',
   linkedin: 'https://linkedin.com/in/max-duffaud',

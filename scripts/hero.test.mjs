@@ -12,10 +12,10 @@ test('the banner logo is the balloon MDB image inside the logo trigger, keeping 
   assert.doesNotMatch(trigger, /logo-molecule|logo-icon/);
 });
 
-test('the hero text sits in .hero-main (kicker, name, one plain line, in that order) and the lens list follows it', () => {
+test('the hero text sits in .hero-main (kicker, name, one plain line, in that order) and the three buttons follow it', () => {
   const hero = between('id="page-home"', 'class="stat-row"');
-  const main = hero.match(/<div class="hero-main">([\s\S]*?)<\/div>\s*<ol class="lens-list/);
-  assert.ok(main, '.hero-main must end right before the lens list');
+  const main = hero.match(/<div class="hero-main">([\s\S]*?)<\/div>\s*<ol class="cta-list/);
+  assert.ok(main, '.hero-main must end right before the button list');
   const at = ['class="kicker', 'class="name', 'class="role-line'].map((part) => { const i = main[1].indexOf(part); assert.ok(i >= 0, 'hero-main contains ' + part); return i; });
   assert.deepEqual(at, [...at].sort((a, b) => a - b), 'order: kicker, name, line');
   assert.match(main[1], /<h1 class="name[^"]*"[^>]*>Max Duffaud<br><em>Bibas<\/em><\/h1>/);

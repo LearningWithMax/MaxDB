@@ -86,7 +86,7 @@ test('index.html: every Home block, the footer and the three fixed or top-level 
   const html = read('index.html');
   const wanted = [
     /<p class="kicker[^"]*"[^>]*\bdata-reveal\b/, /<h1 class="name[^"]*"[^>]*\bdata-reveal\b/, /<p class="role-line[^"]*"[^>]*\bdata-reveal\b/,
-    /<ol class="lens-list[^"]*"[^>]*\bdata-reveal\b/, /<section class="previews"[^>]*\bdata-reveal\b/, /<section class="projects-band"[^>]*\bdata-reveal\b/, /<div class="stat-row"[^>]*\bdata-reveal\b/,
+    /<ol class="cta-list[^"]*"[^>]*\bdata-reveal\b/, /<section class="previews"[^>]*\bdata-reveal\b/, /<section class="projects-band"[^>]*\bdata-reveal\b/, /<div class="stat-row"[^>]*\bdata-reveal\b/,
     /<footer[^>]*\bdata-reveal\b/,
     /<div class="consent-banner"[^>]*\bdata-reveal\b/,
   ];

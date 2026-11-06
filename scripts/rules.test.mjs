@@ -74,33 +74,9 @@ test('verifyManifest reports a missing file', () => {
   assert.match(msgs[0], /missing/);
 });
 
-import { checkLensVariants } from './lib/rules.mjs';
-const grp = (name, lenses) => `<div data-lens-group="${name}">${lenses.map((l) => `<p data-lens-text="${l}">x</p>`).join('')}</div>`;
-
-test('checkLensVariants is clean when every group has the four variants once', () => {
-  assert.deepEqual(checkLensVariants(grp('profile', ['all', 'chem', 'ops', 'cust']) + grp('skills', ['all', 'chem', 'ops', 'cust'])), []);
-});
-
-test('checkLensVariants names the group and the missing lens', () => {
-  const msgs = checkLensVariants(grp('profile', ['all', 'chem', 'cust']));
-  assert.equal(msgs.length, 1);
-  assert.match(msgs[0], /profile/);
-  assert.match(msgs[0], /ops/);
-});
-
-test('checkLensVariants flags a duplicate variant', () => {
-  const msgs = checkLensVariants(grp('profile', ['all', 'chem', 'chem', 'ops', 'cust']));
-  assert.equal(msgs.length, 1);
-  assert.match(msgs[0], /duplicate/);
-});
-
-test('checkLensVariants flags a variant outside any group and an unknown lens value', () => {
-  assert.match(checkLensVariants('<p data-lens-text="all">x</p>' + grp('a', ['all', 'chem', 'ops', 'cust'])).join(' '), /outside/);
-  assert.match(checkLensVariants(grp('a', ['all', 'chem', 'ops', 'cust', 'zzz'])).join(' '), /unknown/);
-});
-
-test('checkLensVariants is clean when the page has no lens groups yet', () => {
-  assert.deepEqual(checkLensVariants('<p>hello</p>'), []);
+import * as rules from './lib/rules.mjs';
+test('the lens variant check is gone with the readings (one CV reading, owner 2026-11-06)', () => {
+  assert.equal('checkLensVariants' in rules, false);
 });
 
 import { findBannedText } from './lib/rules.mjs';
@@ -117,7 +93,7 @@ for (const [label, text] of [
   ['Technical Sales', 'Technical Sales &amp; Customer Success'], ['Cann.Eden single n', 'Team Lead, Cann.Eden'],
   ['organisation', 'the organisation'], ['colour', 'a colour'], ['centre', 'the centre'], ['programme', 'a programme'],
   ['analysed', 'we analysed it'], ['behaviour', 'behaviour'], ['favourite', 'favourite'], ['realised', 'realised'],
-  ['optimised', 'optimised'], ['specialised', 'specialised'], ['listing review', 'did a listing review'],
+  ['optimised', 'optimised'], ['specialised', 'specialised'],
 ]) {
   test(`findBannedText flags ${label} and names the file`, () => {
     const msgs = flagged(text);
@@ -125,6 +101,10 @@ for (const [label, text] of [
     assert.match(msgs[0], /f\.html/);
   });
 }
+
+test('findBannedText no longer flags the listing work: the owner lifted that ban with his choice B (2026-11-06)', () => {
+  assert.deepEqual(flagged('Reviewed and approved resale marketplace listings, a listing review before publication.'), []);
+});
 
 test('findBannedText does not flag valid American words that share a British stem', () => {
   assert.deepEqual(flagged('a specialist, a realistic plan, optimistic, an analysis, the analyses, Cann.Edenn'), []);
@@ -141,7 +121,7 @@ test('findBannedText does not flag the American -ization ending', () => {
 
 import { checkBoardLines } from './lib/rules.mjs';
 const jobTag = (over = {}) => {
-  const a = { year: '2025', place: 'Yashresh', company: 'Cann.Edenn', 'line-all': 'A', 'line-chem': 'B', 'line-ops': 'C', 'line-cust': 'D', 'w-chem': '1', 'w-ops': '1', 'w-cust': '1', ...over };
+  const a = { year: '2025', place: 'Yashresh', company: 'Cann.Edenn', line: 'A', ...over };
   return `<div class="job" data-board ${Object.entries(a).filter(([, v]) => v !== null).map(([k, v]) => `data-${k}="${v}"`).join(' ')}></div>`;
 };
 
@@ -151,16 +131,21 @@ test('checkBoardLines is clean for valid jobs and for a page with no board jobs'
 });
 
 test('checkBoardLines names the job when a line is over 28 characters', () => {
-  const msgs = checkBoardLines(jobTag({ 'line-ops': 'A'.repeat(29) }));
+  const msgs = checkBoardLines(jobTag({ line: 'A'.repeat(29) }));
   assert.equal(msgs.length, 1);
   assert.match(msgs[0], /Cann\.Edenn/);
   assert.match(msgs[0], /too long/);
 });
 
-test('checkBoardLines flags a missing lens line', () => {
-  const msgs = checkBoardLines(jobTag({ 'line-cust': null }));
+test('checkBoardLines flags a missing line', () => {
+  const msgs = checkBoardLines(jobTag({ line: null }));
   assert.equal(msgs.length, 1);
-  assert.match(msgs[0], /cust/);
+  assert.match(msgs[0], /missing line/);
+});
+
+test('checkBoardLines flags a leftover reading attribute (data-line-cust, data-w-ops), so no half-removed reading ships', () => {
+  assert.match(checkBoardLines(jobTag({ 'line-cust': 'X' })).join(' '), /old reading attribute/);
+  assert.match(checkBoardLines(jobTag({ 'w-ops': '1' })).join(' '), /old reading attribute/);
 });
 
 import { checkLogoAssets } from './lib/rules.mjs';

@@ -48,31 +48,9 @@ export function verifyManifest(manifest, read) {
   return out;
 }
 
-// Lens text variants: every [data-lens-group] must contain exactly one variant per lens (all, chem, ops, cust).
-// Groups are siblings and variants never contain groups, so a variant belongs to the nearest group before it.
-const LENS_KEYS = ['all', 'chem', 'ops', 'cust'];
-export function checkLensVariants(html) {
-  const out = [];
-  const groups = [...html.matchAll(/data-lens-group="([^"]+)"/g)].map((m) => ({ name: m[1], at: m.index }));
-  const texts = [...html.matchAll(/data-lens-text="([^"]*)"/g)].map((m) => ({ lens: m[1], at: m.index }));
-  const firstGroup = groups.length ? groups[0].at : Infinity;
-  if (texts.some((t) => t.at < firstGroup)) out.push('data-lens-text outside any data-lens-group');
-  groups.forEach((g, i) => {
-    const end = i + 1 < groups.length ? groups[i + 1].at : Infinity;
-    const mine = texts.filter((t) => t.at > g.at && t.at < end);
-    for (const t of mine) if (!LENS_KEYS.includes(t.lens)) out.push(`lens group "${g.name}": unknown lens "${t.lens}"`);
-    for (const key of LENS_KEYS) {
-      const n = mine.filter((t) => t.lens === key).length;
-      if (n === 0) out.push(`lens group "${g.name}": missing variant "${key}"`);
-      if (n > 1) out.push(`lens group "${g.name}": duplicate variant "${key}"`);
-    }
-  });
-  return out;
-}
-
 // Copy rules for everything shipped to visitors (owner's rules): no em or en dashes (as characters or entities),
-// straight quotes only, American spelling, the company is Cann.Edenn, the lens is Customer-Facing, and nothing
-// from the NDA'd employer's listing work. Each message names the file.
+// straight quotes only, American spelling, the company is Cann.Edenn, and no product names for Intelcia.
+// Each message names the file.
 const BANNED = [
   [/\u2014/, 'em dash'], [/\u2013/, 'en dash'], [/&mdash;/i, '&mdash; entity'], [/&ndash;/i, '&ndash; entity'],
   [/[\u2018\u2019]/, 'curly apostrophe (use a straight one)'], [/[\u201c\u201d]/, 'curly quote (use a straight one)'],
@@ -85,8 +63,7 @@ const BANNED = [
   [/\brealis(?:e|ed|es|ing|ation)\b/i, 'British spelling "realis-"'], [/\boptimis(?:e|ed|es|ing|ation)\b/i, 'British spelling "optimis-"'],
   [/\bspecialis(?:e|ed|es|ing|ation)\b/i, 'British spelling "specialis-"'],
   [/\b\w+isations?\b/i, 'British spelling "-isation" (use -ization)'],
-  [/listing review/i, 'NDA: no listing review'],
-  [/Microsoft Teams/, 'NDA: Intelcia is described by one fact only (no product names)'],
+  [/Microsoft Teams/, 'NDA: no product names for Intelcia'],
 ];
 
 export function findBannedText(name, text) {
@@ -96,26 +73,31 @@ export function findBannedText(name, text) {
 }
 
 // Board jobs on the CV page: every .job[data-board] must be something the board can show. It runs the same parseJobs the
-// board runs at start-up, so a line the flaps cannot show (or a bad weight) fails the check instead of silently hiding the board.
+// board runs at start-up, so a line the flaps cannot show fails the check instead of silently hiding the board. One line per job
+// since the refocus (2026-11-06), so an attribute of the old readings (data-line-cust, data-w-ops) is a leftover.
 import { parseJobs } from '../../modules/board-data.js';
 const decodeEntities = (s) => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 export function checkBoardLines(html) {
   const out = [];
   for (const tag of html.matchAll(/<[^>]*\bdata-board\b[^>]*>/g)) {
     const attrs = Object.fromEntries([...tag[0].matchAll(/\bdata-([a-z-]+)="([^"]*)"/g)].map((m) => [m[1], decodeEntities(m[2])]));
-    const row = {
-      year: attrs.year, place: attrs.place, company: attrs.company,
-      lines: { all: attrs['line-all'], chem: attrs['line-chem'], ops: attrs['line-ops'], cust: attrs['line-cust'] },
-      weights: { chem: attrs['w-chem'], ops: attrs['w-ops'], cust: attrs['w-cust'] },
-    };
-    try { parseJobs([row]); } catch (e) { out.push(`board job "${attrs.company || '(no company)'}": ${e.message}`); }
+    const name = attrs.company || '(no company)';
+    for (const k of Object.keys(attrs)) if (/^(line-|w-)/.test(k)) out.push(`board job "${name}": old reading attribute data-${k}`);
+    try { parseJobs([{ year: attrs.year, place: attrs.place, company: attrs.company, line: attrs.line }]); } catch (e) { out.push(`board job "${name}": ${e.message}`); }
   }
   return out;
 }
 
-// Intelcia is described by one fact only (NDA). Every bullet under that job must be exactly the approved sentence
-// (it may repeat, once per lens variant).
-export const INTELCIA_FACT = 'Onboarded every new hire as the team grew from about 10 to 35.';
+// Intelcia (NDA, the owner's choice B on 2026-11-06): every bullet under that job must be one of these approved sentences.
+// "Resale marketplace" and "retail sector" are fine, product names are not.
+export const INTELCIA_FACTS = [
+  'Reviewed and approved resale marketplace listings (second-hand items in the retail sector) against brand guidelines before publication.',
+  "As the team grew from about 10 to 35 agents across new markets, took on the team's quality, onboarding and support on top of the agent role.",
+  'Trained and onboarded 30+ new agents and ran their tests.',
+  'Served as the live support line for all agents, joining calls to answer case, procedural and technical questions.',
+  'Ran weekly quality evaluations of every agent and built an Excel scoreboard to track performance.',
+  'Worked daily in French and Spanish.',
+];
 export function checkIntelciaFact(html) {
   const at = html.search(/class="job-title">[^<]*Intelcia/);
   if (at < 0) return [];
@@ -123,8 +105,8 @@ export function checkIntelciaFact(html) {
   const next = html.indexOf('<div class="job"', at);
   const block = html.slice(start < 0 ? at : start, next < 0 ? html.length : next);
   const bullets = [...block.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => decodeEntities(m[1].replace(/<[^>]+>/g, '').trim()));
-  if (!bullets.length) return ['Intelcia entry has no bullet: it must carry the one approved fact'];
-  return bullets.filter((t) => t !== INTELCIA_FACT).map((t) => `Intelcia: only the one approved fact is allowed (NDA), found: "${t.slice(0, 60)}"`);
+  if (!bullets.length) return ['Intelcia entry has no bullet: it must carry the approved sentences'];
+  return bullets.filter((t) => !INTELCIA_FACTS.includes(t)).map((t) => `Intelcia: only the approved sentences are allowed (NDA), found: "${t.slice(0, 60)}"`);
 }
 
 // Logo assets made by scripts/stills/ from the chrome render: one banner logo (30 KB at most), two favicons and the sharing image.
@@ -193,7 +175,7 @@ export function checkDeparturesPreview(html) {
   rows.slice(0, 3).forEach((row, i) => {
     const job = jobs[i];
     if (!job) { out.push(`dep-row ${i + 1}: there is no CV job to match`); return; }
-    for (const [cls, attr] of [['year', 'year'], ['place', 'place'], ['company', 'company'], ['line', 'line-all']]) {
+    for (const [cls, attr] of [['year', 'year'], ['place', 'place'], ['company', 'company'], ['line', 'line']]) {
       const got = field(row, cls);
       if (got !== job[attr]) out.push(`dep-row ${i + 1}: ${cls} "${got}" does not match the CV job (data-${attr}="${job[attr]}")`);
     }
