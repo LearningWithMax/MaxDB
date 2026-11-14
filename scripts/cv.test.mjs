@@ -27,8 +27,9 @@ test('CV header: a mono kicker with the place, the name with an italic surname, 
 test('the board section: one line above, no reading buttons, then the frame, the caption and the note (owner, 2026-11-06)', () => {
   const sec = cv.slice(cv.indexOf('<section class="cv-board"'), cv.indexOf('</section>', cv.indexOf('<section class="cv-board"')));
   assert.match(sec, /^<section class="cv-board" id="cvBoard" aria-label="The seven jobs, one line each">/);
-  const sub = sec.indexOf('<p class="cv-board-sub">Seven jobs, one person.</p>');
-  const frame = sec.indexOf('class="cv-board-frame"'), cap = sec.indexOf('<p class="cap cv-board-cap">Fig. 1. Seven jobs, five countries.</p>');
+  // the line and the caption (owner, 2026-11-14): countries instead of the job count
+  const sub = sec.indexOf('<p class="cv-board-sub">Five countries, one method.</p>');
+  const frame = sec.indexOf('class="cv-board-frame"'), cap = sec.indexOf('<p class="cap cv-board-cap">Fig. 1. One line per job, newest first.</p>');
   const note = sec.indexOf('<p class="cv-board-note">The full story of each job is below.</p>');
   assert.ok(sub >= 0 && frame > sub && cap > frame && note > cap, 'line, then frame, then caption, then note');
   assert.doesNotMatch(sec, /cv-board-tabs|reading/i);

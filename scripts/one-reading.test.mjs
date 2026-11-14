@@ -50,7 +50,8 @@ test('the job bullets are the approved ones (Intelcia has its own rule in check.
     'Joined field visits to 7-8 major clients, assessing technical needs and equipment status.',
     // his PDF wording with his own 2026-10-25 rules applied ("sales", not "commercial"; SIAVS named as a trade show)
     "Took part in 10-12 sales meetings, including IPPE in Atlanta (the world's largest poultry trade show) and the SIAVS trade show in São Paulo.",
-    'Handled a French-speaking client alone at IPPE on behalf of the Plasson team, gathering technical requirements. Worked in Spanish and English.',
+    // "alone" removed by the owner on 2026-11-14, to match his CV
+    'Handled a French-speaking client at IPPE on behalf of the Plasson team, gathering technical requirements. Worked in Spanish and English.',
   ]);
   assert.equal(blocks[2].length, 6);
   assert.deepEqual(blocks[3], [
@@ -93,7 +94,34 @@ test('the nutshell story says Customer Success, and Customer-Facing is gone from
   assert.doesNotMatch(html, /Customer-Facing/);
 });
 
-test('the search and sharing preview says the goal (owner, 2026-11-06)', () => {
+test('the search and sharing preview says the goal (owner, 2026-11-06; description rewritten by him on 2026-11-14)', () => {
   assert.equal(SEO.title, 'Max Duffaud Bibas | Customer Success & Onboarding');
-  assert.equal(SEO.description, 'Customer success and onboarding in French, Spanish and English. 30+ new agents trained, seven jobs across five countries. CV, projects and trip. Open to remote.');
+  assert.equal(SEO.description, 'Customer success and onboarding in French, Spanish and English. 30+ agents trained, experience across five countries. Central Israel, open to remote.');
+});
+
+// 2026-11-14: the job count gave way to the countries, and the pieces left over from the three readings are gone.
+test('no "seven jobs" in what a visitor reads: the hero, the board line, the caption and the sharing tags say countries', () => {
+  const home = html.slice(html.indexOf('id="page-home"'), html.indexOf('id="page-cv"'));
+  assert.doesNotMatch(text(home.match(/<p class="role-line[\s\S]*?<\/p>/)[0]), /seven jobs/i);
+  assert.match(cv, /<p class="cv-board-sub">Five countries, one method\.<\/p>/);
+  assert.match(cv, /<p class="cap cv-board-cap">Fig\. 1\. One line per job, newest first\.<\/p>/);
+  const head = html.slice(html.indexOf('<!-- seo:start -->'), html.indexOf('<!-- seo:end -->'));
+  assert.doesNotMatch(head, /seven jobs/i);
+});
+
+test('nothing on the page or in the project data still describes the three CV readings', () => {
+  const projects = read('js/projects.js');
+  for (const stale of [/reads four ways/, /Operations reading/, /flipping to one reading/, /CV readings/, /Pick a lane/]) {
+    assert.doesNotMatch(html, stale);
+    assert.doesNotMatch(projects, stale);
+  }
+});
+
+test('the guestbook: the six made-up entries in order, with Felix Followup where Mireille Duvox was (owner, 2026-11-14)', () => {
+  const guest = html.slice(html.indexOf('<div id="vlogGuestList">'), html.indexOf('<div class="vlog-tab"'));
+  const entries = [...guest.matchAll(/<div class="g-name">([^<]+)<\/div>\s*<div class="g-role">([^<]+)<\/div>\s*<div class="g-comment">([^<]+)<\/div>/g)]
+    .map((m) => decode(m[1].replace(/&gt;/g, '>')));
+  assert.deepEqual(entries, ['Ada K. Voss', '()  =>  {  }', 'Felix Followup', 'Barnaby Sump', 'Nadia Prfrancois', 'Priya Null']);
+  assert.match(guest, /<div class="g-name">Felix Followup<\/div>\s*<div class="g-role">Senior Follow-Up Officer &middot; Circle Back Inc\.<\/div>\s*<div class="g-comment">"Just circling back to say the split-flap board is still flipping in my head\."<\/div>/);
+  assert.doesNotMatch(html, /Mireille|Duvox/);
 });

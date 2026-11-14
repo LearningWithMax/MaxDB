@@ -8,7 +8,7 @@ export const SEO = {
   site: 'https://learningwithmax.github.io/MaxDB/',
   name: 'Max Duffaud Bibas',
   title: 'Max Duffaud Bibas | Customer Success & Onboarding',
-  description: 'Customer success and onboarding in French, Spanish and English. 30+ new agents trained, seven jobs across five countries. CV, projects and trip. Open to remote.',
+  description: 'Customer success and onboarding in French, Spanish and English. 30+ agents trained, experience across five countries. Central Israel, open to remote.',
   image: 'img/og.png',
   imageAlt: 'The chrome balloon letters MDB on a black background, with the name Max Duffaud Bibas below.',
   linkedin: 'https://linkedin.com/in/max-duffaud',

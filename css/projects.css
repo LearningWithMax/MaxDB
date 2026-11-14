@@ -166,6 +166,10 @@
 .how-promise{margin:var(--sp-24) 0 0; padding-left:var(--sp-12); border-left:2px solid var(--gold); font:400 12px/1.6 var(--font-mono); letter-spacing:.03em; color:var(--text-2);}
 .how-action{margin:var(--sp-24) 0 0;}
 #page-projects[data-view="case"] .how-i-work{display:none;}
+/* The services switch (owner, 2026-11-14): data-services on the <html> tag, line 2 of index.html. "off" hides every block marked
+   data-offer (today the How I work block and its "Tell me what you need" button); change it to "on" to show them again. Pure CSS, so it
+   works without JavaScript and nothing flashes while the page loads. */
+:root[data-services="off"] [data-offer]{display:none !important;}
 @media (max-width:700px){
   .how-i-work{padding:var(--sp-32) 0 var(--sp-48);}
   .how-steps li{grid-template-columns:32px 1fr; gap:var(--sp-12);}

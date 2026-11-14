@@ -31,7 +31,7 @@ test('the five approved projects, in order, with the owner statuses', () => {
 
 test('the one lines are the approved text', () => {
   assert.deepEqual(plain(PROJECTS).map((p) => p.oneLine), [
-    'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.',
+    'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all.',
     'A showcase of me: my professional experience in the CV, my creative side in the look, and my tech side in the site itself and its animations, including a 3D flight over the places where I was born, studied and worked. I bring the vision and lead, and Claude brainstorms and builds it with me.',
     "A voice-first to-do and memory system. I talk to Claude on my phone, even in a long ramble, and it files what I said into Notion as tasks, reminders, appointments, notes and ideas. It checks for repeats, plans my day, wraps it up with me and keeps a searchable daily log.",
     "One template for any broker business, built from the car broker. The skeleton stays the same: a catalog, requests with a status, private notes, reply templates and a calendar. For each market, the paths visitors choose, the details of each item and the look change.",
@@ -382,7 +382,8 @@ test('noscriptListHtml: the note is in the plain list too, after where it stands
 // ---- the car broker's text, decided with the owner on 2026-10-27 and updated on 2026-10-28 when the newer code was on the demo (only the new look is still to come) ----
 test('the car broker text: what it does, the dashboard, built with and where it stands, as the owner approved them', () => {
   const car = plain(PROJECTS[0]);
-  assert.equal(car.oneLine, "A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.");
+  // the last sentence ("Each client gets their own version, starting with the look.") dropped by the owner on 2026-11-14, while services are off
+  assert.equal(car.oneLine, "A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all.");
   assert.equal(car.dashboard, "Requests with a status for each car, search and filters, private notes, reply templates, a calendar and CSV export. Cars with photos, prices and tags for each path, and Duplicate. Switch paths on or off, manage locations and site images, and see top customers.");
   assert.equal(car.builtWith, "Next.js, React, TypeScript, Tailwind, Supabase, Resend and Vercel.");
   assert.equal(car.stands, "Live as a demo on invented data. Small adjustments are still coming.");

@@ -179,7 +179,7 @@ test('the website case view is a section inside the Projects page, with the appr
     '<p class="kicker">Project</p>',
     '<h1 id="case-site-title">This website</h1>',
     '<span class="chip chip-live">Live</span>',
-    '<p class="case-lead">The site you are on, built with Claude from written specs: a CV that reads four ways, a trip page and this projects page. Plain HTML, CSS and JavaScript, with no framework and no build step.</p>',
+    '<p class="case-lead">The site you are on, built with Claude from written specs: a CV with a split-flap board, a trip page and this projects page. Plain HTML, CSS and JavaScript, with no framework and no build step.</p>',
     '<figcaption class="cap">Fig. 1. The opening, spheres gathering into the logo.</figcaption>',
     '<h2>How it is built</h2>',
   ].map((s) => { const i = caseSection.indexOf(s); assert.ok(i >= 0, s); return i; });
@@ -215,7 +215,7 @@ test('css: only the case view shows for #projects/<case>, the header and slider 
 
 test('the case view shows three real screens in figures, each with a caption, a size, lazy loading and a description, and no video', () => {
   assert.match(caseSection, /<figure class="case-fig">\s*<img src="img\/projects\/site\/opening\.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The opening: chrome spheres gathered into the letters MDB on a black screen">\s*<figcaption class="cap">Fig\. 1\. The opening, spheres gathering into the logo\.<\/figcaption>\s*<\/figure>/);
-  assert.match(caseSection, /<figure class="case-fig">\s*<img src="img\/projects\/site\/screen-cv\.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The CV page with the departure board showing the Operations reading">\s*<figcaption class="cap">Fig\. 2\. The CV board flipping to one reading\.<\/figcaption>\s*<\/figure>/);
+  assert.match(caseSection, /<figure class="case-fig">\s*<img src="img\/projects\/site\/screen-cv\.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The CV page: the split-flap board with one line per job, the year, the place and what I did">\s*<figcaption class="cap">Fig\. 2\. The CV board, every job flipping into place\.<\/figcaption>\s*<\/figure>/);
   assert.match(caseSection, /<figure class="case-fig">\s*<img src="img\/projects\/site\/screen-trip\.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The trip page: a 3D globe over Europe with a plane in flight, and the list of eleven stops beside it">\s*<figcaption class="cap">Fig\. 3\. The trip page, a plane flying the route one stop at a time\.<\/figcaption>\s*<\/figure>/);
   assert.ok(caseSection.indexOf('Fig. 1.') < caseSection.indexOf('Fig. 2.') && caseSection.indexOf('Fig. 2.') < caseSection.indexOf('Fig. 3.') && caseSection.indexOf('Fig. 3.') < caseSection.indexOf('How it is built'));
   assert.doesNotMatch(caseSection, /case-clip|data-case-clip|<video/);
@@ -262,7 +262,31 @@ test('the Projects page has one "How I work" block, under the slider and the pla
   const slider = page.indexOf('id="projectSlider"'), noscript = page.indexOf('</noscript>'), at = page.indexOf('<section class="how-i-work"'), kase = page.indexOf('<section class="project-case"');
   assert.ok(slider > 0 && noscript > slider && at > noscript && kase > at, 'slider, plain list, the block, then the case view');
   assert.equal([...page.matchAll(/class="how-i-work"/g)].length, 1);
-  assert.match(how, /^<section class="how-i-work" aria-labelledby="how-title">\s*<p class="kicker">How I work<\/p>\s*<h2 id="how-title">Want one like it\?<\/h2>/);
+  assert.match(how, /^<section class="how-i-work" data-offer aria-labelledby="how-title">\s*<p class="kicker">How I work<\/p>\s*<h2 id="how-title">Want one like it\?<\/h2>/);
+});
+
+// ---- The services switch (owner, 2026-11-14): the offer is hidden, not deleted, behind one attribute on line 2 of index.html.
+// data-services="off" hides everything marked data-offer; "on" shows it again. The tests accept either value, so turning it on is one change.
+test('the switch: line 2 of index.html is the <html> tag with data-services set to on or off', () => {
+  const line2 = html.split(/\r?\n/)[1];
+  assert.match(line2, /^<html lang="en" data-services="(on|off)">$/);
+  assert.equal([...html.matchAll(/data-services=/g)].length, 1, 'one switch only');
+});
+
+test('the switch: the How I work block is marked as an offer, and css hides every offer while the switch is off, with or without JavaScript', () => {
+  assert.match(how, /^<section class="how-i-work" data-offer /);
+  assert.match(rule(css, ':root[data-services="off"] [data-offer]'), /display:\s*none\s*!important/);
+});
+
+test('the switch: no services wording or button lives outside a block marked as an offer, so nothing offering services shows while it is off', () => {
+  const outside = html.replace(/<section class="how-i-work" data-offer[\s\S]*?<\/section>/, '');
+  for (const s of ['Want one like it', 'Tell me what you need', 'Project%20inquiry', 'Project inquiry', 'personalize for you', '100% custom']) {
+    assert.ok(!outside.includes(s), s + ' is outside the offer block');
+  }
+  for (const f of ['js/projects.js', 'js/projects-slider.js', 'js/nav.js', 'js/route.js']) {
+    const src = read(f);
+    for (const s of ['how-i-work', 'Want one like it', 'Tell me what you need', 'Project inquiry']) assert.ok(!src.includes(s), f + ' mentions ' + s);
+  }
 });
 
 test('the block says the templates are a base, that something 100% custom can be built, and tells four plain steps', () => {

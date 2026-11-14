@@ -13,7 +13,7 @@ const STATUS_LABELS = { live: 'Live', building: 'Building and testing', planned:
 const PROJECTS = [
   {
     id: 'car-broker', title: 'Car broker template', status: 'live', order: 1, access: 'request', accessTo: 'the dashboard', href: 'https://mdesigns-broker-demo.vercel.app',
-    oneLine: 'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all. Each client gets their own version, starting with the look.',
+    oneLine: 'A website template for a vehicle broker. Visitors choose a path (rentals, leases, no credit check, car sourcing, or selling their car), pick a car and send a request, and the broker contacts them. A private dashboard runs it all.',
     dashboard: 'Requests with a status for each car, search and filters, private notes, reply templates, a calendar and CSV export. Cars with photos, prices and tags for each path, and Duplicate. Switch paths on or off, manage locations and site images, and see top customers.',
     builtWith: 'Next.js, React, TypeScript, Tailwind, Supabase, Resend and Vercel.',
     stands: 'Live as a demo on invented data. Small adjustments are still coming.',
@@ -30,7 +30,7 @@ const PROJECTS = [
     stands: 'Live and still growing. It will keep growing as new projects happen and I keep expanding it.',
     image: {
       src: 'img/projects/site/home.webp', thumb: 'img/projects/site/home-thumb.webp', w: 1600, h: 1000,
-      alt: 'The home page of this website: the name in large serif type, one line about seven jobs across five countries, and three rows for the CV readings.',
+      alt: 'The home page of this website: the name in large serif type, one line about customer success and onboarding, and the first big buttons, to the CV and Projects.',
     },
   },
   {

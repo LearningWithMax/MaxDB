@@ -25,8 +25,8 @@ test('the buttons are one ordered list in #page-home, each with an arrow, and no
   assert.doesNotMatch(html, /lens-list|lens-btn|lens-sub|href="#cv\//);
 });
 
-test('the line under the name says the goal (owner, 2026-11-06)', () => {
-  assert.match(home, /<p class="role-line[^"]*"[^>]*>Customer success and onboarding, in French, Spanish and English\. Seven jobs across five countries, team lead within months in the latest one, and the go-to person for a team of 35 agents before that\.<\/p>/);
+test('the line under the name says the goal (owner, 2026-11-06; countries instead of the job count, 2026-11-14)', () => {
+  assert.match(home, /<p class="role-line[^"]*"[^>]*>Customer success and onboarding, in French, Spanish and English\. Experience across five countries, team lead within months in the latest job, and the go-to person for a team of 35 agents before that\.<\/p>/);
 });
 
 test('the four stats count up: 5, 30+, 4, and the years since the first job, which is computed so it never goes stale', () => {
