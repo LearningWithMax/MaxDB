@@ -17,10 +17,9 @@ const PROJECTS = [
     dashboard: 'Requests with a status for each car, search and filters, private notes, reply templates, a calendar and CSV export. Cars with photos, prices and tags for each path, and Duplicate. Switch paths on or off, manage locations and site images, and see top customers.',
     builtWith: 'Next.js, React, TypeScript, Tailwind, Supabase, Resend and Vercel.',
     stands: 'Live as a demo on invented data. Small adjustments are still coming.',
-    note: 'A new look for the site and the dashboard is coming, so this picture and the demo will change.',
     image: {
       src: 'img/projects/car-broker/home.webp', thumb: 'img/projects/car-broker/home-thumb.webp', w: 1600, h: 1000,
-      alt: 'The home page of the car broker demo: a headline about finding any car in the U.S., a Browse cars button, and four steps from request to confirmed deal over an outline of a car.',
+      alt: 'The home page of the car broker demo: a headline about finding any car in the U.S., a Browse cars button, a low-poly car speeding past light streaks, and four steps from request to deal.',
     },
   },
   {

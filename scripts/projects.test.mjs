@@ -272,7 +272,7 @@ const facts = (html) => [...html.matchAll(/<dt>([^<]+)<\/dt><dd>([^<]*)<\/dd>/g)
 test('panelHtml: the title with its status chip, then what it does, the dashboard, built with and where it stands, in that order', () => {
   const html = panelHtml(PROJECTS[0]);
   assert.match(html, /^<article class="panel" data-id="car-broker" data-status="live">/);
-  assert.match(html, /<div class="panel-head"><h2 class="panel-title">Car broker template<\/h2><span class="chip chip-live">Live<\/span><p class="panel-note">A new look for the site and the dashboard is coming[^<]*<\/p><\/div>/);
+  assert.match(html, /<div class="panel-head"><h2 class="panel-title">Car broker template<\/h2><span class="chip chip-live">Live<\/span><\/div>/);
   assert.match(panelHtml(PROJECTS[1]), /<div class="panel-head"><h2 class="panel-title">This website<\/h2><span class="chip chip-live">Live<\/span><\/div>/, 'a project with no note has no empty note');
   assert.deepEqual(facts(html), [
     ['What it does', escapeHtml(PROJECTS[0].oneLine)],
@@ -351,10 +351,12 @@ test('noscriptListHtml: one item per project with its status and all three facts
 });
 
 
-// ---- the note (owner, 2026-10-26): the car broker's look is about to change, and the page says so ----
-test('only the car broker carries a note, and it says a new look is coming for the site and the dashboard', () => {
-  assert.deepEqual(plain(PROJECTS).filter((p) => p.note !== undefined).map((p) => p.id), ['car-broker']);
-  assert.equal(PROJECTS[0].note, "A new look for the site and the dashboard is coming, so this picture and the demo will change.");
+// ---- the note (owner, 2026-10-26): the car broker's look was about to change, and the page said so. The new look (Night Drive, site and
+// dashboard) went live on the demo on 2026-11-14, the picture was retaken from it, and the note came off. The field stays for the next time. ----
+test('no project carries a note now: the car broker picture shows the look the demo has', () => {
+  assert.deepEqual(plain(PROJECTS).filter((p) => p.note !== undefined).map((p) => p.id), []);
+  assert.equal(PROJECTS[0].image.alt, 'The home page of the car broker demo: a headline about finding any car in the U.S., a Browse cars button, a low-poly car speeding past light streaks, and four steps from request to deal.');
+  assert.ok(PROJECTS[0].image.alt.length <= 200);
 });
 
 test('validateProjects: a note is optional, but when present it is real text, short and free of dashes', () => {
@@ -374,9 +376,10 @@ test('panelHtml: the note sits in the panel head after the status chip, as a par
 });
 
 test('noscriptListHtml: the note is in the plain list too, after where it stands, and only once', () => {
-  const html = noscriptListHtml(PROJECTS);
-  assert.ok(html.includes('Where it stands: ' + escapeHtml(PROJECTS[0].stands) + ' Note: ' + escapeHtml(PROJECTS[0].note)));
+  const html = noscriptListHtml([entry(0, { note: 'A test note.' })].concat(plain(PROJECTS).slice(1)));
+  assert.ok(html.includes('Where it stands: ' + escapeHtml(PROJECTS[0].stands) + ' Note: A test note.'));
   assert.equal(count(html, /Note: /g), 1);
+  assert.equal(count(noscriptListHtml(PROJECTS), /Note: /g), 0, 'no note today, so none in the list');
 });
 
 // ---- the car broker's text, decided with the owner on 2026-10-27 and updated on 2026-10-28 when the newer code was on the demo (only the new look is still to come) ----
